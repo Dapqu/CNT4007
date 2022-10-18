@@ -1,7 +1,7 @@
-// Stores constant variables that will be used throughout this project
+// Stores constant variables that will be used throughout this project.
 
 public final class Constants {
-    // Handshake message constants (in bytes)
+    // Handshake message constants. (in bytes)
     public static final int HANDSHAKE_MESSAGE_LENGTH = 32;
 
     public static final String HANDSHAKE_HEADER = "P2PFILESHARINGPROJ";
@@ -11,11 +11,11 @@ public final class Constants {
     public static final int HANDSHAKE_ZERO_BITS_LENGTH = 10;
     public static final int HANDSHAKE_PEER_ID_LENGTH = 4;
 
-    // Actual message constants (in bytes)
+    // Actual message constants. (in bytes)
     public static final int MESSAGE_LENGTH = 4;
     public static final int MESSAGE_TYPE = 1;
 
-    // Message types (in string value)
+    // Message types. (in string value)
     public static final String MESSAGE_TYPE_CHOKE = "0";
     public static final String MESSAGE_TYPE_UNCHOKE = "1";
     public static final String MESSAGE_TYPE_INTERESTED = "2";
@@ -25,7 +25,7 @@ public final class Constants {
     public static final String MESSAGE_TYPE_REQUEST = "6";
     public static final String MESSAGE_TYPE_PIECE = "7";
 
-    // Piece index field
+    // Piece index field.
     public static final int PIECE_INDEX_FIELD_LENGTH = 4;
 
     private Constants() {

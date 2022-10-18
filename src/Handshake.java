@@ -21,11 +21,11 @@ public class Handshake {
     public static Handshake parseHandshakeMessage(byte[] messageReceived) {
         Handshake handshakeMessage = new Handshake();
 
-        // Parse the header
+        // Parse the header.
         handshakeMessage.byteHeader = Arrays.copyOf(messageReceived, Constants.HANDSHAKE_HEADER_LENGTH);
         handshakeMessage.setHeader(new String(handshakeMessage.byteHeader));
 
-        // Parse the peer id
+        // Parse the peer id.
         handshakeMessage.bytePeerID = Arrays.copyOfRange(messageReceived,
                 Constants.HANDSHAKE_HEADER_LENGTH + Constants.HANDSHAKE_ZERO_BITS_LENGTH, Constants.HANDSHAKE_MESSAGE_LENGTH);
         handshakeMessage.setPeerID(parseInt(new String(handshakeMessage.bytePeerID)));
@@ -36,14 +36,14 @@ public class Handshake {
     public static byte[] sendHandshakeMessage(Handshake handshakeMessage) {
         byte[] sendMessage = new byte[Constants.HANDSHAKE_MESSAGE_LENGTH];
 
-        // Put header into the sending message
+        // Put header into the sending message.
         System.arraycopy(handshakeMessage.byteHeader, 0, sendMessage, 0, Constants.HANDSHAKE_HEADER_LENGTH);
 
-        // Put zero bits into the sending message
+        // Put zero bits into the sending message.
         System.arraycopy(handshakeMessage.byteZeroBits, 0, sendMessage,
                 Constants.HANDSHAKE_HEADER_LENGTH, Constants.HANDSHAKE_ZERO_BITS_LENGTH);
 
-        // Put peer id into the sending message
+        // Put peer id into the sending message.
         System.arraycopy(handshakeMessage.bytePeerID, 0, sendMessage,
                 Constants.HANDSHAKE_HEADER_LENGTH + Constants.HANDSHAKE_ZERO_BITS_LENGTH, Constants.HANDSHAKE_PEER_ID_LENGTH);
 
