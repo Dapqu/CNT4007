@@ -74,4 +74,15 @@ public class PeerProcess {
 
         br.close();
     }
+
+    public static void main(String[] args) throws Exception {
+        int peerID = parseInt(args[0]);
+
+        Logger.startLogger("log_peer_" + peerID + ".log");
+        Logger.writeLog("Peer " + peerID + " makes a connection to Peer 1002.");
+        Logger.stopLogger();
+
+        PeerProcess.readCommonProperties();
+        PeerProcess.readPeerInfo();
+    }
 }
