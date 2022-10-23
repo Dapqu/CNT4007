@@ -16,14 +16,14 @@ public final class Constants {
     public static final int MESSAGE_TYPE = 1;
 
     // Message types. (in string value)
-    public static final String MESSAGE_TYPE_CHOKE = "0";
-    public static final String MESSAGE_TYPE_UNCHOKE = "1";
-    public static final String MESSAGE_TYPE_INTERESTED = "2";
-    public static final String MESSAGE_TYPE_NOT_INTERESTED = "3";
-    public static final String MESSAGE_TYPE_HAVE = "4";
-    public static final String MESSAGE_TYPE_BITFIELD = "5";
-    public static final String MESSAGE_TYPE_REQUEST = "6";
-    public static final String MESSAGE_TYPE_PIECE = "7";
+    public static final int MESSAGE_TYPE_CHOKE = 0;
+    public static final int MESSAGE_TYPE_UNCHOKE = 1;
+    public static final int MESSAGE_TYPE_INTERESTED = 2;
+    public static final int MESSAGE_TYPE_NOT_INTERESTED = 3;
+    public static final int MESSAGE_TYPE_HAVE = 4;
+    public static final int MESSAGE_TYPE_BITFIELD = 5;
+    public static final int MESSAGE_TYPE_REQUEST = 6;
+    public static final int MESSAGE_TYPE_PIECE = 7;
 
     // Piece index field.
     public static final int PIECE_INDEX_FIELD_LENGTH = 4;

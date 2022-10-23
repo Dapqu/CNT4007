@@ -1,6 +1,7 @@
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 
 public class Logger {
     private static FileOutputStream fileStream;
@@ -31,10 +32,10 @@ public class Logger {
     public static void writeLog(String log) {
         try {
             // [Time]: [message]
-            fileWriter.write(time() + ": "+ log + '\n');
+            fileWriter.write(time() + ": "+ log + "." + '\n');
 
             // Debug
-            System.out.println(time() + ": "+ log);
+            System.out.println(time() + ": "+ log + "." + '\n');
         } catch (IOException e) {
             System.out.println("Logger writing error occurred.");
             throw new RuntimeException(e);
@@ -57,5 +58,62 @@ public class Logger {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu/MM/dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
         return dtf.format(now);
+    }
+
+    // Whenever a peer makes a TCP connection to other peer, it generates the following log.
+    public static void logTCPConnection(int hostPeerID, int connectedPeerID) {
+        writeLog("Peer " + hostPeerID + " makes a connection to Peer " + connectedPeerID);
+    }
+
+    // Whenever a peer is connected from another peer, it generates the following log.
+    public static void logConnected(int hostPeerID, int connectedPeerID) {
+        writeLog("Peer " + hostPeerID + " is connected from Peer " + connectedPeerID);
+    }
+
+    // Whenever a peer changes its preferred neighborsIDs, it generates the following log.
+    public static void logChangePreferredNeighbors(int hostPeerID, int[] neighborsIDs) {
+        writeLog("Peer " + hostPeerID + " has the preferred neighborsIDs " + Arrays.toString(neighborsIDs));
+    }
+
+    // Whenever a peer changes its optimistically unchoked neighbor, it generates the following log.
+    public static void logChangeOptUnchokedNeighbors(int hostPeerID, int unchokedPeerID) {
+        writeLog("Peer " + hostPeerID + " has the optimistically unchoked neighbor " + unchokedPeerID);
+    }
+
+    // Whenever  a  peer  is  unchoked  by  a  neighbor  (which  means  when  a  peer  receives  an
+    // unchoking message from a neighbor), it generates the following log.
+    public static void logUnchoking(int PeerID_1, int PeerID_2) {
+        writeLog("Peer " + PeerID_1 + " is unchoked by " + PeerID_2);
+    }
+
+    // Whenever a peer is choked by a neighbor (which means when a peer receives a choking
+    // message from a neighbor), it generates the following log.
+    public static void logChoking(int PeerID_1, int PeerID_2) {
+        writeLog("Peer " + PeerID_1 + " is choked by " + PeerID_2);
+    }
+
+    // Whenever a peer receives a ‘have’ message, it generates the following log.
+    public static void logHave(int recevingPeerID, int sendingPeerID, int pieceIndex) {
+        writeLog("Peer " + recevingPeerID + " received the 'have' message from " + sendingPeerID + " for the piece " + pieceIndex);
+    }
+
+    // Whenever a peer receives an ‘interested’ message, it generates the following log.
+    public static void logInterested(int recevingPeerID, int sendingPeerID) {
+        writeLog("Peer " + recevingPeerID + " received the 'interested' message from " + sendingPeerID);
+    }
+
+    // Whenever a peer receives a ‘not interested’ message, it generates the following log.
+    public static void logNotInterested(int recevingPeerID, int sendingPeerID) {
+        writeLog("Peer " + recevingPeerID + " received the 'not interested' message from " + sendingPeerID);
+    }
+
+    // Whenever a peer finishes downloading a piece, it generates the following log.
+    public static void logDownload(int recevingPeerID, int sendingPeerID, int pieceIndex, int numOfPieces) {
+        writeLog("Peer " + recevingPeerID + " has downloaded the piece " + pieceIndex + " from " + sendingPeerID + ". Now the number of pieces it has is " + numOfPieces);
+    }
+
+    // Whenever a peer downloads the complete file, it generates the following log.
+    public static void logCompelete(int hostPeerID) {
+        writeLog("Peer " + hostPeerID + " has downloaded the complete file");
     }
 }

@@ -8,6 +8,8 @@ public class ConfigurationFileVariables {
     public static int fileSize;
     public static int pieceSize;
 
+    public static int numOfPieces = Math.ceilDiv(fileSize, pieceSize);
+
     private ConfigurationFileVariables() {
 
     }

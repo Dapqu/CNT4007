@@ -7,7 +7,7 @@ import java.util.Objects;
 import static java.lang.Integer.parseInt;
 
 public class PeerProcess {
-    public static HashMap<Integer, PeerInfo> peerInfoMap = new HashMap<>();
+    public static HashMap<Integer, Peer> peerMap = new HashMap<>();
 
     // Reads the Common.cfg file.
     public static void readCommonProperties() throws Exception {
@@ -62,11 +62,11 @@ public class PeerProcess {
             String[] line = st.split(" ");
 
             // Creating a new peerInfo Object which stores all the peer data from cfg file.
-            PeerInfo newPeerInfo = new PeerInfo(parseInt(line[0]), line[1], parseInt(line[2]), parseInt(line[3]) == 1);
-            peerInfoMap.put(parseInt(line[0]), newPeerInfo);
+            Peer newPeer = new Peer(parseInt(line[0]), line[1], parseInt(line[2]), parseInt(line[3]) == 1);
+            peerMap.put(parseInt(line[0]), newPeer);
 
             // Debugging output.
-            newPeerInfo.printAllInfo();
+            newPeer.printAllInfo();
 
             // Reads the next line.
             st = br.readLine();
@@ -78,11 +78,27 @@ public class PeerProcess {
     public static void main(String[] args) throws Exception {
         int peerID = parseInt(args[0]);
 
+        // Debugging Logger
+        int peerID2 = 1002;
+        int[] peerIDs = {0, 1, 2};
+
         Logger.startLogger("log_peer_" + peerID + ".log");
-        Logger.writeLog("Peer " + peerID + " makes a connection to Peer 1002.");
+
+        Logger.logTCPConnection(peerID, peerID2);
+        Logger.logConnected(peerID, peerID2);
+        Logger.logChangePreferredNeighbors(peerID, peerIDs);
+        Logger.logChangeOptUnchokedNeighbors(peerID, peerID2);
+        Logger.logUnchoking(peerID, peerID2);
+        Logger.logChoking(peerID, peerID2);
+        Logger.logHave(peerID, peerID2, 4);
+        Logger.logInterested(peerID, peerID2);
+        Logger.logNotInterested(peerID, peerID2);
+        Logger.logDownload(peerID, peerID2, 4, 20);
+        Logger.logCompelete(peerID);
+
         Logger.stopLogger();
 
-        PeerProcess.readCommonProperties();
-        PeerProcess.readPeerInfo();
+        readCommonProperties();
+        readPeerInfo();
     }
 }
