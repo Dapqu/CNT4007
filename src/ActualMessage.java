@@ -12,6 +12,11 @@ public class ActualMessage {
     public byte[] messagePayload;
     public byte[] message;
 
+    int SenderID;
+    int ReciverID;
+
+    int PieceIndex;
+
     public ActualMessage(byte[] M){
         message = M;
     }
@@ -40,41 +45,42 @@ public class ActualMessage {
         return byteArrayToInt(temp);
     }
 
-    public void handleMessageType(){
+    public void handleMessage(byte[] message){
+        readMessage(message);
         switch(messageType){
             case Constants.MESSAGE_TYPE_CHOKE:
                 messageTypeName = "choke";
-                handleChoke();
+                handleChoke(message);
                 break;
 
             case Constants.MESSAGE_TYPE_UNCHOKE:
                 messageTypeName = "unchoke";
-                handleUnchoke();
+                handleUnchoke(message);
                 break;
 
             case Constants.MESSAGE_TYPE_INTERESTED:
                 messageTypeName = "interested";
-                handleInterested();
+                handleInterested(message);
                 break;
 
             case Constants.MESSAGE_TYPE_NOT_INTERESTED:
                 messageTypeName = "notInterested";
-                handleNotInterested();
+                handleNotInterested(message);
                 break;
 
             case Constants.MESSAGE_TYPE_HAVE:
                 messageTypeName = "have";
-                handleHave();
+                handleHave(message);
                 break;
 
             case Constants.MESSAGE_TYPE_BITFIELD:
                 messageTypeName = "bitfield";
-                handleBitfield();
+                handleBitfield(message);
                 break;
 
             case Constants.MESSAGE_TYPE_REQUEST:
                 messageTypeName = "request";
-                handleRequest();
+                handleRequest(message);
                 break;
 
             case Constants.MESSAGE_TYPE_PIECE:
@@ -84,63 +90,72 @@ public class ActualMessage {
         }
     }
 
-    public void handleChoke(){
+    public void handleChoke(byte[] message){
         // TODO: Add parameter to this method maybe?
         // Since logger needs that info.
-        // Logger.logChoking(id1, id2);
+        Logger.logChoking(ReciverID, SenderID);
     }
 
-    public void handleUnchoke(){
+    public void handleUnchoke(byte[] message){
         // TODO: Add parameter to this method maybe?
         // Since logger needs that info.
-        // Logger.logUnchoking(id1, id2);
+        Logger.logUnchoking(ReciverID, SenderID);
     }
 
-    public void handleInterested(){
+    public void handleInterested(byte[] message){
         // TODO: Add parameter to this method maybe?
         // Since logger needs that info.
-        // Logger.logInterested(id1, id2);
+        Logger.logInterested(ReciverID, SenderID);
     }
 
-    public void handleNotInterested(){
+    public void handleNotInterested(byte[] message){
         // TODO: Add parameter to this method maybe?
         // Since logger needs that info.
-        // Logger.logNotInterested(id1, id2);
+        Logger.logNotInterested(ReciverID, SenderID);
     }
 
-    public void handleHave(){
+    public void handleHave(byte[] message){
         // TODO: Add parameter to this method maybe?
         // Since logger needs that info.
-        // Logger.logHave(id1, id2, index);
+        getPayload(message);
+        Logger.logHave(ReciverID, SenderID, PieceIndex);
     }
 
-    public void handleBitfield(){
+    public void handleBitfield(byte[] message){
         // TODO: Do we need log here?
+        getPayload(message);
     }
 
-    public void handleRequest(){
+    public void handleRequest(byte[] message){
         // TODO: Do we need log here?
+        getPayload(message);
     }
 
     public void handlePiece(){
         // TODO: Do we need log here?
+        getPayload(message);
         // After piece message, it will be the start of download, thus we will be logging:
-        // logDownload() and logComplete().
+        //Logger.logDownload();
+        //Logger.logCompelete();
     }
 
     public String getMessageTypeName(){
+
         return messageTypeName;
     }
 
     public int getMessageType(){
+
         return messageType;
     }
 
     public int getMessageLength(){
+
         return messageLength;
     }
 
     public byte[] getMessagePayload(){
+
         return messagePayload;
     }
 

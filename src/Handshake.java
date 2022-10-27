@@ -58,18 +58,22 @@ public class Handshake {
     }
 
     public int getPeerID() {
+
         return peerID;
     }
 
     public void setPeerID(int peerID) {
+
         this.peerID = peerID;
     }
 
     public String getHeader() {
+
         return header;
     }
 
     public void setHeader(String header) {
+
         this.header = header;
     }
 }

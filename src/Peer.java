@@ -50,42 +50,52 @@ public class Peer {
     }
 
     public void updateBitField(int i) {
-            this.bitField[i] = 1;
+
+        this.bitField[i] = 1;
     }
 
     public int getPeerID() {
+
         return peerID;
     }
 
     public void setPeerID(int peerID) {
+
         this.peerID = peerID;
     }
 
     public String getHostAddress() {
+
         return hostAddress;
     }
 
     public void setHostAddress(String hostAddress) {
+
         this.hostAddress = hostAddress;
     }
 
     public int getPort() {
+
         return port;
     }
 
     public void setPort(int port) {
+
         this.port = port;
     }
 
     public boolean isHasFile() {
+
         return hasFile;
     }
 
     public void setHasFile(boolean hasFile) {
+
         this.hasFile = hasFile;
     }
 
     public byte[] getBitField() {
+
         return this.bitField;
     }
 
