@@ -85,35 +85,47 @@ public class ActualMessage {
     }
 
     public void handleChoke(){
-
+        // TODO: Add parameter to this method maybe?
+        // Since logger needs that info.
+        // Logger.logChoking(id1, id2);
     }
 
     public void handleUnchoke(){
-
+        // TODO: Add parameter to this method maybe?
+        // Since logger needs that info.
+        // Logger.logUnchoking(id1, id2);
     }
 
     public void handleInterested(){
-
+        // TODO: Add parameter to this method maybe?
+        // Since logger needs that info.
+        // Logger.logInterested(id1, id2);
     }
 
     public void handleNotInterested(){
-
+        // TODO: Add parameter to this method maybe?
+        // Since logger needs that info.
+        // Logger.logNotInterested(id1, id2);
     }
 
     public void handleHave(){
-
+        // TODO: Add parameter to this method maybe?
+        // Since logger needs that info.
+        // Logger.logHave(id1, id2, index);
     }
 
     public void handleBitfield(){
-
+        // TODO: Do we need log here?
     }
 
     public void handleRequest(){
-
+        // TODO: Do we need log here?
     }
 
     public void handlePiece(){
-
+        // TODO: Do we need log here?
+        // After piece message, it will be the start of download, thus we will be logging:
+        // logDownload() and logComplete().
     }
 
     public String getMessageTypeName(){
