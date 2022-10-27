@@ -1,3 +1,9 @@
+/**
+ * The main class that the project would be executed from, ex. PeerProcess 1001.
+ * contains functions like reading the Common.cfg and PeerInfo.cfg file which stores the properties within.
+ * And the main function to execute the whole BitTorrent like system.
+ */
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -78,7 +84,9 @@ public class PeerProcess {
     public static void main(String[] args) throws Exception {
         int peerID = parseInt(args[0]);
 
-        // Debugging Logger
+        /*
+          Debugging Logger Starts
+         */
         int peerID2 = 1002;
         int[] peerIDs = {0, 1, 2};
 
@@ -97,6 +105,9 @@ public class PeerProcess {
         Logger.logCompelete(peerID);
 
         Logger.stopLogger();
+        /*
+          Debugging Logger Ends
+         */
 
         readCommonProperties();
         readPeerInfo();

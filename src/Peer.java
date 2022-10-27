@@ -1,3 +1,8 @@
+/**
+ * Stores every possible variable, properties that could be associated with individual peer we are being provided through PeerInfo.cfg.
+ * Essential class for our object-oriented programming approach.
+ */
+
 import java.util.Arrays;
 
 public class Peer {
@@ -78,6 +83,10 @@ public class Peer {
 
     public void setHasFile(boolean hasFile) {
         this.hasFile = hasFile;
+    }
+
+    public byte[] getBitField() {
+        return this.bitField;
     }
 
     // Debugging method.

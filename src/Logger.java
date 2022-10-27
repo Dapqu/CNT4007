@@ -1,3 +1,8 @@
+/**
+ * Logging class, creates log file if there is none, write specific logs depending on the action being done by the TCP connection.
+ * Time stamp in front of each log statement.
+ */
+
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

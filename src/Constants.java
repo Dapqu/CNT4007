@@ -1,4 +1,7 @@
-// Stores constant variables that will be used throughout this project.
+/**
+ * Stores constant variables that will be used throughout this project.
+ * Values for these constant variables are taking from the project description document.
+ */
 
 public final class Constants {
     // Handshake message constants. (in bytes)

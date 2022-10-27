@@ -1,3 +1,9 @@
+/**
+ * One of our most important class to handle the Actual Messages that are going to be sent throughout the TCP connection.
+ * Contains functions like reading the byte array messages and getting the individual components within them,
+ * and handling those messages depending on their types.
+ */
+
 public class ActualMessage {
     //public int pieces;
     public int messageType;

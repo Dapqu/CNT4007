@@ -1,3 +1,8 @@
+/**
+ * Initiates right after the TCP connection, general class functionalities for the handshake message interaction.
+ */
+
+
 import java.util.Arrays;
 
 import static java.lang.Integer.parseInt;
@@ -18,6 +23,7 @@ public class Handshake {
         this.peerID = peerID;
     }
 
+    // Decodes Handshake message from byte array into string or integer accordingly.
     public static Handshake parseHandshakeMessage(byte[] messageReceived) {
         Handshake handshakeMessage = new Handshake();
 
@@ -33,6 +39,7 @@ public class Handshake {
         return handshakeMessage;
     }
 
+    // Encodes Handshake message from string and integer into byte array message.
     public static byte[] sendHandshakeMessage(Handshake handshakeMessage) {
         byte[] sendMessage = new byte[Constants.HANDSHAKE_MESSAGE_LENGTH];
 
