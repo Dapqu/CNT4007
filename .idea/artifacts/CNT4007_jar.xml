@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="CNT4007:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/CNT4007_jar</output-path>
+    <root id="archive" name="CNT4007.jar">
+      <element id="module-output" name="CNT4007" />
+    </root>
+  </artifact>
+</component>

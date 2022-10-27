@@ -12,7 +12,7 @@ public class ConfigurationFileVariables {
     public static int pieceSize;
 
     // Calculates the amount of pieces in the file, which would help for setting up bitfield and further more interactions.
-    public static int numOfPieces = Math.ceilDiv(fileSize, pieceSize);
+    public static int numOfPieces;
 
     private ConfigurationFileVariables() {
 
