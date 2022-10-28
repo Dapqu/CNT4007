@@ -53,7 +53,8 @@ public class PeerProcess {
             }
 
             // Calculates the amount of pieces in the file, which would help for setting up bitfield and further more interactions.
-            ConfigurationFileVariables.numOfPieces = Math.ceilDiv(ConfigurationFileVariables.fileSize, ConfigurationFileVariables.pieceSize);
+            ConfigurationFileVariables.numOfPieces = (ConfigurationFileVariables.fileSize + ConfigurationFileVariables.pieceSize - 1)
+                    / ConfigurationFileVariables.pieceSize;
 
             br.close();
     }
