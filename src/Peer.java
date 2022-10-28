@@ -49,6 +49,49 @@ public class Peer {
         }
     }
 
+    public void sendChokeMessage(){
+        ActualMessage Choke = new ActualMessage(Constants.MESSAGE_TYPE_CHOKE);
+        Send();
+    }
+
+    public void sendUnchokeMessage(){
+        ActualMessage Choke = new ActualMessage(Constants.MESSAGE_TYPE_UNCHOKE);
+        Send();
+    }
+
+    public void sendInterestedMessage(){
+        ActualMessage Choke = new ActualMessage(Constants.MESSAGE_TYPE_INTERESTED);
+        Send();
+    }
+
+    public void sendNotinterestedMessage(){
+        ActualMessage Choke = new ActualMessage(Constants.MESSAGE_TYPE_NOT_INTERESTED);
+        Send();
+    }
+
+    public void sendHaveMessage(){
+        ActualMessage Choke = new ActualMessage(Constants.MESSAGE_TYPE_HAVE);
+        Send();
+    }
+
+    public void sendBitfieldMessage(){
+        ActualMessage Choke = new ActualMessage(Constants.MESSAGE_TYPE_BITFIELD);
+        Send();
+    }
+
+    public void sendRequestMessage(){
+        ActualMessage Choke = new ActualMessage(Constants.MESSAGE_TYPE_REQUEST);
+        Send();
+    }
+
+    public void sendPieceMessage(){
+        ActualMessage Choke = new ActualMessage(Constants.MESSAGE_TYPE_PIECE);
+        Send();
+    }
+
+    public void Send(){
+
+    }
     public void updateBitField(int i) {
 
         this.bitField[i] = 1;

@@ -21,6 +21,18 @@ public class ActualMessage {
         message = M;
     }
 
+    public ActualMessage(int messageType) {
+        messageType = messageType;
+        messageLength = 1;
+        messagePayload = new byte[0];
+    }
+
+    public ActualMessage(int Type, byte[] Payload) {
+        messageType = Type;
+        messagePayload = Payload;
+        messageLength = readMessageLength(Payload);
+    }
+
     public void readMessage(byte[] message){
         messageLength = readMessageLength(message);
         messageType = message[4];
@@ -45,6 +57,7 @@ public class ActualMessage {
         return byteArrayToInt(temp);
     }
 
+    // handles the different types of messages
     public void handleMessage(byte[] message){
         readMessage(message);
         switch(messageType){
@@ -90,30 +103,35 @@ public class ActualMessage {
         }
     }
 
+    // Will need to add functionality for Choke
     public void handleChoke(byte[] message){
         // TODO: Add parameter to this method maybe?
         // Since logger needs that info.
         Logger.logChoking(ReciverID, SenderID);
     }
 
+    // Will need to add functionality Unchoke
     public void handleUnchoke(byte[] message){
         // TODO: Add parameter to this method maybe?
         // Since logger needs that info.
         Logger.logUnchoking(ReciverID, SenderID);
     }
 
+    // Will need to add functionality for interested
     public void handleInterested(byte[] message){
         // TODO: Add parameter to this method maybe?
         // Since logger needs that info.
         Logger.logInterested(ReciverID, SenderID);
     }
 
+    // Will need to add functionality for not interested
     public void handleNotInterested(byte[] message){
         // TODO: Add parameter to this method maybe?
         // Since logger needs that info.
         Logger.logNotInterested(ReciverID, SenderID);
     }
 
+    // Will need to add functionality for have
     public void handleHave(byte[] message){
         // TODO: Add parameter to this method maybe?
         // Since logger needs that info.
@@ -121,16 +139,21 @@ public class ActualMessage {
         Logger.logHave(ReciverID, SenderID, PieceIndex);
     }
 
+    // Will need to add functionality for bitfield
+    //Potentially own class
     public void handleBitfield(byte[] message){
         // TODO: Do we need log here?
         getPayload(message);
     }
 
+    // Will need to add functionality for request
     public void handleRequest(byte[] message){
         // TODO: Do we need log here?
+        Logger.logRequest(ReciverID, SenderID);
         getPayload(message);
     }
 
+    // Will need to add functionality for piece
     public void handlePiece(){
         // TODO: Do we need log here?
         getPayload(message);
@@ -157,6 +180,18 @@ public class ActualMessage {
     public byte[] getMessagePayload(){
 
         return messagePayload;
+    }
+
+    public int getSenderID(){
+        return SenderID;
+    }
+
+    public int getReciverID(){
+        return ReciverID;
+    }
+
+    public int getPieceIndex(){
+        return PieceIndex;
     }
 
     public static int byteArrayToInt(byte[] bytes) {

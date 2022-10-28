@@ -121,4 +121,8 @@ public class Logger {
     public static void logCompelete(int hostPeerID) {
         writeLog("Peer " + hostPeerID + " has downloaded the complete file");
     }
+
+    public static void logRequest(int recevingPeerID, int sendingPeerID) {
+        writeLog("Peer " + sendingPeerID + " has send a request to " + recevingPeerID);
+    }
 }
