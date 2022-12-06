@@ -53,7 +53,8 @@ public class PeerServer {
                 in = new ObjectInputStream(connection.getInputStream());
                 try {
                     while (true) {
-                            //receive the message sent from the client
+                        //check for handshake then
+                        //MESSAGE HANDLER GOES HERE
                         message = (String) in.readObject();
                         //show the message to the user
                         System.out.println("Receive message: " + message + " from client ");

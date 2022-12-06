@@ -16,7 +16,8 @@ public class PeerClient {
 	void initiateHandshake()
 	{
 		try{
-			//create a socket to connect to the server
+			//SEND MESSAGES
+			//send handshake then
 			requestSocket = new Socket(peer.getHostAddress(), peer.getPort());
 			System.out.println("Connected to localhost in port 8000");
 			//initialize inputStream and outputStream
@@ -32,7 +33,9 @@ public class PeerClient {
 			sendMessage(message);
 			//Receive the upperCase sentence from the server
 			Recived = (byte[]) in.readObject();
-			//show the message to the user
+			//If we get the response we want(bitfield), start a loop of sending and reciving the data.
+			//create the message and send it
+
 
 		}
 		catch (ConnectException e) {
