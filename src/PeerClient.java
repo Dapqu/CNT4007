@@ -6,7 +6,7 @@ public class PeerClient {
 	ObjectOutputStream out;         //stream write to the socket
  	ObjectInputStream in;          //stream read from the socket
 	byte[] message;                //message send to the server
-	byte[] Recived;                //capitalized message read from the server
+	byte[] Received;                //capitalized message read from the server
 	private Peer peer;
 
 	public PeerClient(Peer peer) {
@@ -27,13 +27,35 @@ public class PeerClient {
 			
 			//get Input from standard input
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-			HandshakeHelper hs = new HandshakeHelper(peer.getPeerID());
-			message = HandshakeHelper.CreateHandShakeMessage(hs);
-			//Send the sentence to the server
+			message = HandshakeHelper.sendHandshakeMessage();
+			//going to peer server
 			sendMessage(message);
-			//Receive the upperCase sentence from the server
-			Recived = (byte[]) in.readObject();
-			//If we get the response we want(bitfield), start a loop of sending and reciving the data.
+
+			//Peer2 returns this. Should be a handshake
+			Received = (byte[]) in.readObject();
+
+			//verify handshake from peer2
+			if (HandshakeHelper.VerifyHandShakeMessage(Received)) {
+				peer2ID = HandshakeHelper.parseHandshakeMessage(Received);
+				peer.setBitFieldMap(peer2ID, new byte[0]);
+			}
+			if(peer.getHasFile()){
+				//actually build bitfield (bitfield just payload)
+				//send bitfield
+				ActualMessage MessageToSend = new ActualMessage(ActualMessage.MessageType.BITFIELD, peer.getBitField());
+				sendMessage(MessageToSend.message);
+			}
+			// Assuming that every peer in the connection want to end up having everything there is with each other, aka hasFile = 1 and BitField all the same,
+			// job is done, disconnect.
+			//maybe put in a larger while loop that turns it off
+			do {
+				Received = (byte[]) in.readObject();
+				ActualMessage Ms = new ActualMessage(Received);
+				message = MessageHandler.handleMessage(Ms, peer, peer2ID);
+				sendMessage(message);
+			} while(Unchoked);
+			//Guess a choke will turn off connected, but maybe put it in a bigger loop
+			//If we get the response we want(handshake), start a loop of sending and reciving the data. Starting with bit field
 			//create the message and send it
 
 

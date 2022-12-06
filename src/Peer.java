@@ -4,6 +4,7 @@
  */
 
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class Peer {
     private int peerID;
@@ -12,6 +13,7 @@ public class Peer {
     private boolean hasFile;
 
     private byte[] bitField;
+    private HashMap<Integer, byte[]> bitFieldMap = new HashMap<>();
 
     public Peer() {
 
@@ -27,13 +29,13 @@ public class Peer {
     }
 
     public void makeBitField() {
-        int numOfPadBits = 8 - (ConfigurationFileVariables.numOfPieces % 8);
+        int numOfPadBits = 8 - (ConfigService.ConfigurationFileVariables.numOfPieces % 8);
         // If the amount of pieces isn't divisible by 8, add padding bits.(0's)
         if (numOfPadBits != 8) {
-            this.bitField = new byte[ConfigurationFileVariables.numOfPieces + numOfPadBits];
+            this.bitField = new byte[ConfigService.ConfigurationFileVariables.numOfPieces + numOfPadBits];
         }
         else {
-            this.bitField = new byte[ConfigurationFileVariables.numOfPieces];
+            this.bitField = new byte[ConfigService.ConfigurationFileVariables.numOfPieces];
         }
 
         if (this.hasFile) {
@@ -41,7 +43,7 @@ public class Peer {
 
             // Change the padding bits at the end to 0s.
             for (int i = 0; i < numOfPadBits; i++) {
-                bitField[ConfigurationFileVariables.numOfPieces + i] = 0;
+                bitField[ConfigService.ConfigurationFileVariables.numOfPieces + i] = 0;
             }
         }
         else {
@@ -145,5 +147,13 @@ public class Peer {
     // Debugging method.
     public void printAllInfo() {
         System.out.println(this.peerID + " " + this.hostAddress + " " + this.port + " " + this.hasFile);
+    }
+
+    public HashMap<Integer, byte[]> getBitFieldMap() {
+        return bitFieldMap;
+    }
+
+    public void setBitFieldMap(int peerID, byte[] bitField) {
+        this.bitFieldMap.put(peerID, bitField);
     }
 }

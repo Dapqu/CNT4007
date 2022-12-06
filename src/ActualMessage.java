@@ -22,29 +22,19 @@ public class ActualMessage {
     public byte[] message;
 
     int SenderID;
-    int ReciverID;
+    int ReceiverID;
 
     int PieceIndex;
 
-    public ActualMessage(byte[] M){
-        message = M;
-    }
-
-    public ActualMessage(int messageType) {
-        messageType = messageType;
-        messageLength = 1;
-        messagePayload = new byte[0];
-    }
-
-    public ActualMessage(int Type, byte[] Payload) {
+    public ActualMessage(MessageType Type, byte[] Payload) {
         messageType = Type;
         messagePayload = Payload;
         messageLength = readMessageLength(Payload);
     }
 
     public void readMessage(byte[] message){
+        messageType = MessageType.values()[message[4]];
         messageLength = readMessageLength(message);
-        messageType = message[4];
         messagePayload = getPayload(message);
     }
     //Message length might include the one byte type. Check if we have errors.
@@ -62,13 +52,15 @@ public class ActualMessage {
         return byteArrayToInt(temp);
     }
 
-
+    /*
     public String getMessageTypeName(){
 
         return messageTypeName;
     }
 
-    public int getMessageType(){
+     */
+
+    public MessageType getMessageType(){
 
         return messageType;
     }
@@ -87,8 +79,8 @@ public class ActualMessage {
         return SenderID;
     }
 
-    public int getReciverID(){
-        return ReciverID;
+    public int getReceiverID(){
+        return ReceiverID;
     }
 
     public int getPieceIndex(){
@@ -105,5 +97,14 @@ public class ActualMessage {
         }
 
         return value;
+    }
+
+    public static byte[] intToByteArray(int integer) {
+        return new byte[] {
+                (byte) ((integer >> 24) & 0xff),
+                (byte) ((integer >> 16) & 0xff),
+                (byte) ((integer >> 8) & 0xff),
+                (byte) ((integer >> 0) & 0xff),
+        };
     }
 }

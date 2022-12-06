@@ -45,35 +45,35 @@ public class MessageHandler {
     }
 
     // Will need to add functionality for Choke
-    public void handleChoke(byte[] message){
+    public static void handleChoke(byte[] message){
         // TODO: Add parameter to this method maybe?
         // Since logger needs that info.
         Logger.logChoking(ReciverID, SenderID);
     }
 
     // Will need to add functionality Unchoke
-    public void handleUnchoke(byte[] message){
+    public static void handleUnchoke(byte[] message){
         // TODO: Add parameter to this method maybe?
         // Since logger needs that info.
         Logger.logUnchoking(ReciverID, SenderID);
     }
 
     // Will need to add functionality for interested
-    public void handleInterested(byte[] message){
+    public static void handleInterested(byte[] message){
         // TODO: Add parameter to this method maybe?
         // Since logger needs that info.
         Logger.logInterested(ReciverID, SenderID);
     }
 
     // Will need to add functionality for not interested
-    public void handleNotInterested(byte[] message){
+    public static void handleNotInterested(byte[] message){
         // TODO: Add parameter to this method maybe?
         // Since logger needs that info.
         Logger.logNotInterested(ReciverID, SenderID);
     }
 
     // Will need to add functionality for have
-    public void handleHave(byte[] message){
+    public static void handleHave(byte[] message){
         // TODO: Add parameter to this method maybe?
         // Since logger needs that info.
         getPayload(message);
@@ -82,20 +82,30 @@ public class MessageHandler {
 
     // Will need to add functionality for bitfield
     //Potentially own class
-    public void handleBitfield(byte[] message){
+    public static byte[] handleBitfield(byte[] message, Peer peer1){
         // TODO: Do we need log here?
-        getPayload(message);
+        // Once A receives a 'bitfield' message from B, A will compare its bitfield with received bitfield, in this case the payload.
+        // If B's bitfield, payload, has pieces that A's bitfield does not have, A sends 'interested' message, else sends 'not interested'.
+
+        byte[] receivedBitField = getPayload(message);
+        if (!peer1.getHasFile()) {
+            if (receivedBitField != peer1.getBitField()) {
+                return sendInterested();
+            } else {
+                return sendNotInterested();
+            }
+        }
     }
 
     // Will need to add functionality for request
-    public void handleRequest(byte[] message){
+    public static void handleRequest(byte[] message){
         // TODO: Do we need log here?
         Logger.logRequest(ReciverID, SenderID);
         getPayload(message);
     }
 
     // Will need to add functionality for piece
-    public void handlePiece(){
+    public static void handlePiece(){
         // TODO: Do we need log here?
         getPayload(message);
         // After piece message, it will be the start of download, thus we will be logging:

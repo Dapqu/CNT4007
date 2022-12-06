@@ -25,21 +25,13 @@ public class HandshakeHelper {
         header = "P2PFILESHARINGPROJ";
     }
 
-
-    //public Handshake(int peerID) {this.peerID = peerID;}
-
     // Decodes Handshake message from byte array into string or integer accordingly.
-    public static HandshakeHelper parseHandshakeMessage(byte[] messageReceived) {
-        HandshakeHelper handshakeHelperMessage = new HandshakeHelper();
-
-        // Parse the header.
-        handshakeHelperMessage.byteHeader = Arrays.copyOf(messageReceived, Constants.HANDSHAKE_HEADER_LENGTH);
-        handshakeHelperMessage.setHeader(new String(handshakeHelperMessage.byteHeader));
-
+    public static int parseHandshakeMessage(byte[] messageReceived) {
         // Parse the peer id.
-        handshakeHelperMessage.bytePeerID = Arrays.copyOfRange(messageReceived,
+        bytePeerID = Arrays.copyOfRange(messageReceived,
                 Constants.HANDSHAKE_HEADER_LENGTH + Constants.HANDSHAKE_ZERO_BITS_LENGTH, Constants.HANDSHAKE_MESSAGE_LENGTH);
-        handshakeHelperMessage.setPeerID(parseInt(new String(handshakeHelperMessage.bytePeerID)));
+
+        String peerID = new String(bytePeerID);
 
         return handshakeHelperMessage;
     }
