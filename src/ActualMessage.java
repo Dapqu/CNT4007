@@ -5,10 +5,19 @@
  */
 
 public class ActualMessage {
-    //public int pieces;
-    public int messageType;
+    public enum MessageType {
+        CHOKE,
+        UNCHOKE,
+        INTERESTED,
+        NOT_INTERESTED,
+        HAVE,
+        BITFIELD,
+        REQUEST,
+        PIECE,
+    }
+
+    public MessageType messageType;
     public int messageLength;
-    public String messageTypeName;
     public byte[] messagePayload;
     public byte[] message;
 
@@ -41,17 +50,13 @@ public class ActualMessage {
     //Message length might include the one byte type. Check if we have errors.
     public byte[] getPayload(byte[] message){
         byte[] payload = new byte[messageLength];
-        for (int i = 0; i < messageLength; i++) {
-            payload[i] = message[i + 5];
-        }
+        System.arraycopy(message, 5, payload, 0, messageLength);
         return payload;
     }
 
     public int readMessageLength(byte[] message){
         byte[] temp = new byte[Constants.MESSAGE_LENGTH];
-        for (int i = 0; i < 4; i++) {
-            temp[i] = message[i];
-        }
+        System.arraycopy(message, 0, temp, 0, 4);
 
         // Convert temp from byte to int
         return byteArrayToInt(temp);
