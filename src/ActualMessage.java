@@ -3,6 +3,7 @@
  * Contains functions like reading the byte array messages and getting the individual components within them,
  * and handling those messages depending on their types.
  */
+import java.lang.*;
 
 public class ActualMessage {
     public enum MessageType {
@@ -29,14 +30,41 @@ public class ActualMessage {
     public ActualMessage(MessageType Type, byte[] Payload) {
         messageType = Type;
         messagePayload = Payload;
-        messageLength = readMessageLength(Payload);
+        messageLength = messagePayload.length;
+        buildMessage();
     }
+
+    public ActualMessage(MessageType Type) {
+        messageType = Type;
+        messageLength = 0;
+        buildMessage();
+    }
+
+    //Build Actual message from byte
+    public ActualMessage(byte[] message) {
+        messageType = MessageType.values()[message[4]];
+        messageLength = readMessageLength(message);
+        messagePayload = getPayload(message);
+    }
+
+    private void buildMessage() {
+        this.message =  new byte[4 + 1 + messageLength];
+        // Adding length byte array
+        byte[] a = intToByteArray(messageLength);
+        System.arraycopy(a, 0, this.message, 0, 4);
+        // Adding type byte
+        this.message[4] = (byte)(messageType.ordinal());
+        // Adding payload byte array
+        System.arraycopy(messagePayload, 0, this.message, 5, messageLength);
+    }
+
 
     public void readMessage(byte[] message){
         messageType = MessageType.values()[message[4]];
         messageLength = readMessageLength(message);
         messagePayload = getPayload(message);
     }
+
     //Message length might include the one byte type. Check if we have errors.
     public byte[] getPayload(byte[] message){
         byte[] payload = new byte[messageLength];

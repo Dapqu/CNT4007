@@ -1,44 +1,45 @@
 public class MessageHandler {
-    //maybe return a message to send? This might be done separatly though
-    public static void handleMessage(ActualMessage message){
+    //maybe return a message to send? This might be done separately though
+
+    public static byte[] handleMessage(ActualMessage message, Peer peer1, int peer2ID){
+        byte[] payload = message.getMessagePayload();
         switch(message.messageType){
-            case Constants.MESSAGE_TYPE_CHOKE:
-                messageTypeName = "choke";
-                handleChoke(message);
+            case CHOKE:
+                handleChoke(payload);
+                Logger.logChoking(peer2ID, peer1.getPeerID());
                 break;
 
-            case Constants.MESSAGE_TYPE_UNCHOKE:
-                messageTypeName = "unchoke";
-                handleUnchoke(message);
+            case UNCHOKE:
+                handleUnchoke(payload);
+                Logger.logUnchoking(peer2ID, peer1.getPeerID());
                 break;
 
-            case Constants.MESSAGE_TYPE_INTERESTED:
-                messageTypeName = "interested";
-                handleInterested(message);
+            case INTERESTED:
+                handleInterested(payload);
+                Logger.logInterested(peer2ID, peer1.getPeerID());
                 break;
 
-            case Constants.MESSAGE_TYPE_NOT_INTERESTED:
-                messageTypeName = "notInterested";
-                handleNotInterested(message);
+            case NOT_INTERESTED:
+                handleNotInterested(payload);
+                Logger.logNotInterested(peer2ID, peer1.getPeerID());
                 break;
 
-            case Constants.MESSAGE_TYPE_HAVE:
-                messageTypeName = "have";
-                handleHave(message);
+            case HAVE:
+                handleHave(payload);
+                Logger.logHave(peer2ID, peer1.getPeerID(), PieceIndex);
                 break;
 
-            case Constants.MESSAGE_TYPE_BITFIELD:
-                messageTypeName = "bitfield";
-                handleBitfield(message);
+            case BITFIELD:
+                peer1.setBitFieldMap(peer2ID, message.messagePayload);
+                return handleBitfield(payload, peer1);
                 break;
 
-            case Constants.MESSAGE_TYPE_REQUEST:
-                messageTypeName = "request";
-                handleRequest(message);
+            case REQUEST:
+                handleRequest(payload);
+                Logger.logRequest(peer2ID, peer1.getPeerID());
                 break;
 
-            case Constants.MESSAGE_TYPE_PIECE:
-                messageTypeName = "piece";
+            case PIECE:
                 handlePiece();
                 break;
         }
@@ -48,28 +49,24 @@ public class MessageHandler {
     public static void handleChoke(byte[] message){
         // TODO: Add parameter to this method maybe?
         // Since logger needs that info.
-        Logger.logChoking(ReciverID, SenderID);
     }
 
     // Will need to add functionality Unchoke
     public static void handleUnchoke(byte[] message){
         // TODO: Add parameter to this method maybe?
         // Since logger needs that info.
-        Logger.logUnchoking(ReciverID, SenderID);
     }
 
     // Will need to add functionality for interested
     public static void handleInterested(byte[] message){
         // TODO: Add parameter to this method maybe?
         // Since logger needs that info.
-        Logger.logInterested(ReciverID, SenderID);
     }
 
     // Will need to add functionality for not interested
     public static void handleNotInterested(byte[] message){
         // TODO: Add parameter to this method maybe?
         // Since logger needs that info.
-        Logger.logNotInterested(ReciverID, SenderID);
     }
 
     // Will need to add functionality for have
@@ -77,7 +74,6 @@ public class MessageHandler {
         // TODO: Add parameter to this method maybe?
         // Since logger needs that info.
         getPayload(message);
-        Logger.logHave(ReciverID, SenderID, PieceIndex);
     }
 
     // Will need to add functionality for bitfield
@@ -100,7 +96,6 @@ public class MessageHandler {
     // Will need to add functionality for request
     public static void handleRequest(byte[] message){
         // TODO: Do we need log here?
-        Logger.logRequest(ReciverID, SenderID);
         getPayload(message);
     }
 
@@ -112,4 +107,51 @@ public class MessageHandler {
         //Logger.logDownload();
         //Logger.logCompelete();
     }
+
+    public static byte[] getPayload(byte[] message){
+        int messageLength = readMessageLength(message);
+        byte[] payload = new byte[messageLength];
+        System.arraycopy(message, 5, payload, 0, messageLength);
+        return payload;
+    }
+
+    public static int readMessageLength(byte[] message){
+        byte[] temp = new byte[Constants.MESSAGE_LENGTH];
+        System.arraycopy(message, 0, temp, 0, 4);
+
+        // Convert temp from byte to int
+        return byteArrayToInt(temp);
+    }
+    public static int byteArrayToInt(byte[] bytes) {
+        int value = 0;
+
+        for (byte b : bytes) {
+            // Shifting previous value 8 bits to right and
+            // add it with next value
+            value = (value << 8) + (b & 0xFF);
+        }
+
+        return value;
+    }
+
+    public static byte[] sendInterested(){
+        ActualMessage interested = new ActualMessage(ActualMessage.MessageType.INTERESTED);
+        return interested.message;
+    }
+
+    public static byte[] sendNotInterested(){
+        ActualMessage notInterested = new ActualMessage(ActualMessage.MessageType.NOT_INTERESTED);
+        return notInterested.message;
+    }
+
+    public byte[] sendChoke(){
+        ActualMessage choke = new ActualMessage(ActualMessage.MessageType.CHOKE);
+        return choke.message;
+    }
+
+    public byte[] sendUnchoke(){
+        ActualMessage unchoke = new ActualMessage(ActualMessage.MessageType.UNCHOKE);
+        return unchoke.message;
+    }
+
 }

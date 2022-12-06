@@ -8,6 +8,8 @@ public class PeerClient {
 	byte[] message;                //message send to the server
 	byte[] Received;                //capitalized message read from the server
 	private Peer peer;
+	private int peer2ID;
+	private boolean Unchoked;
 
 	public PeerClient(Peer peer) {
 		this.peer = peer;
@@ -16,10 +18,8 @@ public class PeerClient {
 	void initiateHandshake()
 	{
 		try{
-			//SEND MESSAGES
 			//send handshake then
 			requestSocket = new Socket(peer.getHostAddress(), peer.getPort());
-			System.out.println("Connected to localhost in port 8000");
 			//initialize inputStream and outputStream
 			out = new ObjectOutputStream(requestSocket.getOutputStream());
 			out.flush();

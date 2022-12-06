@@ -10,9 +10,9 @@ import java.util.Arrays;
 import static java.lang.Integer.parseInt;
 
 public class HandshakeHelper {
-    private byte[] byteHeader = new byte[Constants.HANDSHAKE_HEADER_LENGTH];
-    private final byte[] byteZeroBits = Constants.HANDSHAKE_ZERO_BITS.getBytes();
-    private byte[] bytePeerID = new byte[Constants.HANDSHAKE_PEER_ID_LENGTH];
+    private static byte[] byteHeader = new byte[Constants.HANDSHAKE_HEADER_LENGTH];
+    private static final byte[] byteZeroBits = Constants.HANDSHAKE_ZERO_BITS.getBytes();
+    private static byte[] bytePeerID = new byte[Constants.HANDSHAKE_PEER_ID_LENGTH];
 
     private String header;
     private String peerID;
@@ -33,48 +33,31 @@ public class HandshakeHelper {
 
         String peerID = new String(bytePeerID);
 
-        return handshakeHelperMessage;
+        return Integer.parseInt(peerID);
+    }
+
+    public static boolean VerifyHandShakeMessage(byte[] messageReceived) {
+        byte[] temp = Arrays.copyOf(messageReceived, Constants.HANDSHAKE_HEADER_LENGTH);
+        String string = new String(temp);
+        return string.equals("P2PFILESHARINGPROJ");
     }
 
     // Encodes Handshake message from string and integer into byte array message.
-    public static byte[] sendHandshakeMessage(HandshakeHelper handshakeHelperMessage) {
+    public static byte[] sendHandshakeMessage() {
         byte[] sendMessage = new byte[Constants.HANDSHAKE_MESSAGE_LENGTH];
 
         // Put header into the sending message.
-        System.arraycopy(handshakeHelperMessage.byteHeader, 0, sendMessage, 0, Constants.HANDSHAKE_HEADER_LENGTH);
+        System.arraycopy(byteHeader, 0, sendMessage, 0, Constants.HANDSHAKE_HEADER_LENGTH);
 
         // Put zero bits into the sending message.
-        System.arraycopy(handshakeHelperMessage.byteZeroBits, 0, sendMessage,
+        System.arraycopy(byteZeroBits, 0, sendMessage,
                 Constants.HANDSHAKE_HEADER_LENGTH, Constants.HANDSHAKE_ZERO_BITS_LENGTH);
 
         // Put peer id into the sending message.
-        System.arraycopy(handshakeHelperMessage.bytePeerID, 0, sendMessage,
+        System.arraycopy(bytePeerID, 0, sendMessage,
                 Constants.HANDSHAKE_HEADER_LENGTH + Constants.HANDSHAKE_ZERO_BITS_LENGTH, Constants.HANDSHAKE_PEER_ID_LENGTH);
 
         return sendMessage;
-    }
-    public byte[] createHandShakeMessage() {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        try {
-            stream.write(header.getBytes(StandardCharsets.UTF_8));
-            stream.write(new byte[10]);
-            stream.write(peerID.getBytes(StandardCharsets.UTF_8));
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-        }
-        return stream.toByteArray();
-    }
-
-    public static byte[] CreateHandShakeMessage(int peerID){
-        String s = "P2PFILESHARINGPROJ0000000000" + peerID;
-        byte[] byteArrray = s.getBytes();
-        return byteArrray;
-    }
-
-    public void readHandShakeMessage(byte[] message){
-        String msg = new String(message,StandardCharsets.UTF_8);
-        this.peerID = msg.substring(28,32);
     }
 
     //public int getPeerID() {
