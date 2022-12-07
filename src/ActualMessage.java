@@ -80,14 +80,6 @@ public class ActualMessage {
         return byteArrayToInt(temp);
     }
 
-    /*
-    public String getMessageTypeName(){
-
-        return messageTypeName;
-    }
-
-     */
-
     public MessageType getMessageType(){
 
         return messageType;
@@ -101,18 +93,6 @@ public class ActualMessage {
     public byte[] getMessagePayload(){
 
         return messagePayload;
-    }
-
-    public int getSenderID(){
-        return SenderID;
-    }
-
-    public int getReceiverID(){
-        return ReceiverID;
-    }
-
-    public int getPieceIndex(){
-        return PieceIndex;
     }
 
     public static int byteArrayToInt(byte[] bytes) {
