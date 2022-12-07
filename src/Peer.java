@@ -12,9 +12,9 @@ public class Peer {
     private int port;
     private boolean hasFile;
 
-    public boolean theyChokedUs;
+    public boolean choked;
 
-    public boolean weChokedThem;
+    public boolean Interested;
 
     public int rate; //more here
 

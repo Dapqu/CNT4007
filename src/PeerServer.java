@@ -24,7 +24,7 @@ public class PeerServer {
         }
 
     }
-
+    //Every peer has a new handler.
     /**
      * A handler thread class.  Handlers are spawned from the listening
      * loop and are responsible for dealing with a single client's requests.
@@ -48,6 +48,8 @@ public class PeerServer {
                 out = new ObjectOutputStream(connection.getOutputStream());
                 out.flush();
                 in = new ObjectInputStream(connection.getInputStream());
+                //handle handshake and store ID then go into loop
+
                 try {
                     while (true) {
                         received = (byte[]) in.readObject();

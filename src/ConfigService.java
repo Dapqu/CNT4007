@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 import static java.lang.Integer.parseInt;
+import java.util.HashSet;
 
 public class ConfigService {
     public static HashMap<Integer, Peer> peerMap = new HashMap<>();
@@ -25,6 +26,7 @@ public class ConfigService {
         // Calculates the amount of pieces in the file, which would help for setting up bitfield and further more interactions.
         public static int numOfPieces;
     }
+
 
     // Reads the Common.cfg file.
     public static void readCommonProperties() throws Exception {
@@ -95,7 +97,40 @@ public class ConfigService {
     //get everyone else function
 
     //get unchoked function
+    public static HashSet<Peer> getUnchoked(){
+        HashSet<Peer> UnChoked = new HashSet<>();
+        ConfigService.peerMap.forEach((peerID, peer) -> {
+            if(PeerHandler.peerID != peerID){
+                if(peer.choked == false){
+                    UnChoked.add(peer);
+                }
+            }
+        });
+        return UnChoked;
+    }
+    public static HashSet<Peer> getchoked(){
+        HashSet<Peer> Choked = new HashSet<>();
+        ConfigService.peerMap.forEach((peerID, peer) -> {
+            if(PeerHandler.peerID != peerID){
+                if(peer.choked == true){
+                    Choked.add(peer);
+                }
+            }
+        });
+        return Choked;
+    }
 
+    public static HashSet<Peer> getInterested(){
+        HashSet<Peer> Interested = new HashSet<>();
+        ConfigService.peerMap.forEach((peerID, peer) -> {
+            if(PeerHandler.peerID != peerID){
+                if(peer.Interested == true){
+                    Interested.add(peer);
+                }
+            }
+        });
+        return Interested;
+    }
     //get choked function
 
     //maybe return them as a map
