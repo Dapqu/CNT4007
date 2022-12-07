@@ -92,30 +92,12 @@ public class ConfigService {
         br.close();
     }
 
-    /*
-        public static void main(String[] args) throws Exception {
-            int peerID = parseInt(args[0]);
+    //get everyone else function
 
-            int peerID2 = 1002;
-            int[] peerIDs = {0, 1, 2};
+    //get unchoked function
 
-            Logger.startLogger("log_peer_" + peerID + ".log");
+    //get choked function
 
-            Logger.logTCPConnection(peerID, peerID2);
-            Logger.logConnected(peerID, peerID2);
-            Logger.logChangePreferredNeighbors(peerID, peerIDs);
-            Logger.logChangeOptUnchokedNeighbors(peerID, peerID2);
-            Logger.logUnchoking(peerID, peerID2);
-            Logger.logChoking(peerID, peerID2);
-            Logger.logHave(peerID, peerID2, 4);
-            Logger.logInterested(peerID, peerID2);
-            Logger.logNotInterested(peerID, peerID2);
-            Logger.logDownload(peerID, peerID2, 4, 20);
-            Logger.logCompelete(peerID);
+    //maybe return them as a map
 
-            Logger.stopLogger();
-            readCommonProperties();
-            readPeerInfo();
-        }
-        */
 }

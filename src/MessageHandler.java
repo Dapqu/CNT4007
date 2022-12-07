@@ -30,7 +30,7 @@ public class MessageHandler {
                 break;
 
             case BITFIELD:
-                peer1.setBitFieldMap(peer2ID, message.messagePayload);
+                //peer1.setBitFieldMap(peer2ID, message.messagePayload);
                 return handleBitfield(payload, peer1);
                 break;
 

@@ -6,13 +6,10 @@ import java.util.*;
 
 public class PeerServer {
 
-    private int port;
-    private int peerID;
+    private Peer peer;
     private ServerSocket listener;
 
-    PeerServer(int port, int peerID) {
-        this.port = port;
-        this.peerID = peerID;
+    PeerServer() {
     }
 
     public void startSever(int port) throws Exception {
@@ -33,8 +30,8 @@ public class PeerServer {
      * loop and are responsible for dealing with a single client's requests.
      */
     private class Handler extends Thread {
-        private String message;    //message received from the client
-        private String MESSAGE;    //uppercase message send to the client
+        private byte[] received;    //message received from the client
+        private byte[] response;    //uppercase message send to the client
         private Socket connection;
         private ObjectInputStream in; //stream read from the socket
         private ObjectOutputStream out;    //stream write to the socket
@@ -53,14 +50,9 @@ public class PeerServer {
                 in = new ObjectInputStream(connection.getInputStream());
                 try {
                     while (true) {
-                        //check for handshake then
-                        //MESSAGE HANDLER GOES HERE
-                        message = (String) in.readObject();
-                        //show the message to the user
-                        System.out.println("Receive message: " + message + " from client ");
-                        //Capitalize all letters in the message
-                        MESSAGE = message.toUpperCase();
-                        //send MESSAGE back to the client
+                        received = (byte[]) in.readObject();
+                        ActualMessage Ms = new ActualMessage(received);
+                        response = MessageHandler.handleMessage(Ms, peer, otherpeer);
                         sendMessage(MESSAGE);
                     }
                 } catch (ClassNotFoundException classnot) {

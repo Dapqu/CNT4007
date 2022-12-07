@@ -26,7 +26,7 @@ public class HandshakeHelper {
     }
 
     // Decodes Handshake message from byte array into string or integer accordingly.
-    public static int parseHandshakeMessage(byte[] messageReceived) {
+    private static int parseHandshakeMessage(byte[] messageReceived) {
         // Parse the peer id.
         bytePeerID = Arrays.copyOfRange(messageReceived,
                 Constants.HANDSHAKE_HEADER_LENGTH + Constants.HANDSHAKE_ZERO_BITS_LENGTH, Constants.HANDSHAKE_MESSAGE_LENGTH);
@@ -36,10 +36,11 @@ public class HandshakeHelper {
         return Integer.parseInt(peerID);
     }
 
-    public static boolean VerifyHandShakeMessage(byte[] messageReceived) {
+    public static boolean VerifyHandShakeMessage(byte[] messageReceived, int expectedPeerID) {
         byte[] temp = Arrays.copyOf(messageReceived, Constants.HANDSHAKE_HEADER_LENGTH);
         String string = new String(temp);
-        return string.equals("P2PFILESHARINGPROJ");
+        if(!string.equals("P2PFILESHARINGPROJ")) return false;
+        return parseHandshakeMessage(messageReceived) == expectedPeerID;
     }
 
     // Encodes Handshake message from string and integer into byte array message.

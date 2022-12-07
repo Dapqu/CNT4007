@@ -2,8 +2,8 @@ import java.security.Permission;
 import java.util.*;
 
 public class PeerHandler {
-    public int peerID;
-    public PeerServer server;
+    public static int peerID;
+    public static PeerServer server;
 
     PeerHandler(int peerID) {
         this.peerID = peerID;
@@ -21,7 +21,7 @@ public class PeerHandler {
 
     public void startServer() {
         var peer = ConfigService.peerMap.get(peerID);
-        server = new PeerServer(peer.getPort(), peerID);
+        server = new PeerServer();
         Logger.startLogger("log_peer_" + peerID + ".log");
     }
 

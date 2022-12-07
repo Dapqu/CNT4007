@@ -12,8 +12,14 @@ public class Peer {
     private int port;
     private boolean hasFile;
 
+    public boolean theyChokedUs;
+
+    public boolean weChokedThem;
+
+    public int rate; //more here
+
     private byte[] bitField;
-    private HashMap<Integer, byte[]> bitFieldMap = new HashMap<>();
+    //private HashMap<Integer, byte[]> bitFieldMap = new HashMap<>();
 
     public Peer() {
 
@@ -102,16 +108,16 @@ public class Peer {
         return this.bitField;
     }
 
+    public void setBitField(byte[] x) {
+        bitField = x;
+    }
+
     // Debugging method.
     public void printAllInfo() {
         System.out.println(this.peerID + " " + this.hostAddress + " " + this.port + " " + this.hasFile);
     }
 
-    public HashMap<Integer, byte[]> getBitFieldMap() {
-        return bitFieldMap;
-    }
+    //public HashMap<Integer, byte[]> getBitFieldMap() {return bitFieldMap;}
 
-    public void setBitFieldMap(int peerID, byte[] bitField) {
-        this.bitFieldMap.put(peerID, bitField);
-    }
+    //public void setBitFieldMap(int peerID, byte[] bitField) {this.bitFieldMap.put(peerID, bitField);}
 }

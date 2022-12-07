@@ -7,51 +7,46 @@ public class PeerClient {
  	ObjectInputStream in;          //stream read from the socket
 	byte[] message;                //message send to the server
 	byte[] Received;                //capitalized message read from the server
-	private Peer peer;
-	private int peer2ID;
+	private Peer otherPeer;
 	private boolean Unchoked;
 
-	public PeerClient(Peer peer) {
-		this.peer = peer;
+	public PeerClient(Peer otherPeer) {
+		this.otherPeer = otherPeer;
 	}
 
 	void initiateHandshake()
 	{
 		try{
-			//send handshake then
-			requestSocket = new Socket(peer.getHostAddress(), peer.getPort());
-			//initialize inputStream and outputStream
+			requestSocket = new Socket(otherPeer.getHostAddress(), otherPeer.getPort());
 			out = new ObjectOutputStream(requestSocket.getOutputStream());
 			out.flush();
 			in = new ObjectInputStream(requestSocket.getInputStream());
-			
-			//get Input from standard input
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+
+			//send handShake
 			message = HandshakeHelper.sendHandshakeMessage();
-			//going to peer server
 			sendMessage(message);
 
-			//Peer2 returns this. Should be a handshake
+			//Verify handshake response
 			Received = (byte[]) in.readObject();
+			if (!HandshakeHelper.VerifyHandShakeMessage(Received, otherPeer.getPeerID())) return;
 
-			//verify handshake from peer2
-			if (HandshakeHelper.VerifyHandShakeMessage(Received)) {
-				peer2ID = HandshakeHelper.parseHandshakeMessage(Received);
-				peer.setBitFieldMap(peer2ID, new byte[0]);
-			}
-			if(peer.getHasFile()){
-				//actually build bitfield (bitfield just payload)
-				//send bitfield
-				ActualMessage MessageToSend = new ActualMessage(ActualMessage.MessageType.BITFIELD, peer.getBitField());
-				sendMessage(MessageToSend.message);
-			}
+			//send our bitfield
+			ActualMessage MessageToSend = new ActualMessage(ActualMessage.MessageType.BITFIELD, otherPeer.getBitField());
+			sendMessage(MessageToSend.message);
+
+			Received = (byte[]) in.readObject();
+			ActualMessage Ms = new ActualMessage(Received);
+//			ConfigService.peerMap.get(returnedPeerID).setBitField(new byte[0]);
+			//if(ConfigService.peerMap.get(PeerHandler.peerID).getHasFile()){
+			//}
 			// Assuming that every peer in the connection want to end up having everything there is with each other, aka hasFile = 1 and BitField all the same,
 			// job is done, disconnect.
 			//maybe put in a larger while loop that turns it off
 			do {
 				Received = (byte[]) in.readObject();
 				ActualMessage Ms = new ActualMessage(Received);
-				message = MessageHandler.handleMessage(Ms, peer, peer2ID);
+				message = MessageHandler.handleMessage(Ms, ConfigService.peerMap.get(PeerHandler.peerID), otherPeer.getPeerID());
 				sendMessage(message);
 			} while(Unchoked);
 			//Guess a choke will turn off connected, but maybe put it in a bigger loop
