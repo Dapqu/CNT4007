@@ -18,11 +18,11 @@ public class HandshakeHelper {
     private String peerID;
 
     public HandshakeHelper(String ID) {
-        header = "P2PFILESHARINGPROJ";
+        header = Constants.HANDSHAKE_HEADER;
         peerID = ID;
     }
     public HandshakeHelper() {
-        header = "P2PFILESHARINGPROJ";
+        header = Constants.HANDSHAKE_HEADER;
     }
 
     // Decodes Handshake message from byte array into string or integer accordingly.
@@ -39,7 +39,7 @@ public class HandshakeHelper {
     public static boolean VerifyHandShakeMessage(byte[] messageReceived, int expectedPeerID) {
         byte[] temp = Arrays.copyOf(messageReceived, Constants.HANDSHAKE_HEADER_LENGTH);
         String string = new String(temp);
-        if(!string.equals("P2PFILESHARINGPROJ")) return false;
+        if(!string.equals(Constants.HANDSHAKE_HEADER)) return false;
         return parseHandshakeMessage(messageReceived) == expectedPeerID;
     }
 
@@ -61,14 +61,12 @@ public class HandshakeHelper {
         return sendMessage;
     }
 
-    //public int getPeerID() {
-
-        //return peerID;
-    //}
+    public int getPeerID() {
+        return parseInt(peerID);
+    }
 
     public void setPeerID(int peerID) {
-
-        //this.peerID = peerID;
+        this.peerID = String.valueOf(peerID);
     }
 
     public String getHeader() {

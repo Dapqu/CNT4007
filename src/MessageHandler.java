@@ -1,3 +1,6 @@
+import java.util.Arrays;
+import java.util.Random;
+
 public class MessageHandler {
     //maybe return a message to send? This might be done separately though
 
@@ -11,7 +14,7 @@ public class MessageHandler {
 
             case UNCHOKE:
                 handleUnchoke(peer2ID);
-                sendRequest();
+                sendRequest(peer1);
                 Logger.logUnchoking(peer2ID, peer1.getPeerID());
                 break;
 
@@ -27,13 +30,12 @@ public class MessageHandler {
 
             case HAVE:
                 handleHave(payload, peer1);
-                Logger.logHave(peer2ID, peer1.getPeerID(), PieceIndex);
+                Logger.logHave(peer2ID, peer1.getPeerID(), byteArrayToInt(Arrays.copyOf(payload, Constants.PIECE_INDEX_FIELD_LENGTH)));
                 break;
 
             case BITFIELD:
                 //peer1.setBitFieldMap(peer2ID, message.messagePayload);
                 return handleBitfield(payload, peer1);
-                break;
 
             case REQUEST:
                 handleRequest(payload);
@@ -43,7 +45,6 @@ public class MessageHandler {
             case PIECE:
                 handlePiece(message, peer2ID);
                 return sendHave(payload);
-                break;
         }
         return null;
     }
@@ -85,7 +86,6 @@ public class MessageHandler {
     // Will need to add functionality for bitfield
     //Potentially own class
     public static byte[] handleBitfield(byte[] payload, Peer peer1){
-        // TODO: Do we need log here?
         // Once A receives a 'bitfield' message from B, A will compare its bitfield with received bitfield, in this case the payload.
         // If B's bitfield, payload, has pieces that A's bitfield does not have, A sends 'interested' message, else sends 'not interested'.
 
@@ -106,8 +106,8 @@ public class MessageHandler {
 
     // Will need to add functionality for piece
     public static void handlePiece(ActualMessage message, int peer2){
-        byte[] indexField = new byte[4];
-        System.arraycopy(getPayload(message.message), 0, indexField, 0, 4);
+        byte[] indexField = new byte[Constants.PIECE_INDEX_FIELD_LENGTH];
+        System.arraycopy(getPayload(message.message), 0, indexField, 0, Constants.PIECE_INDEX_FIELD_LENGTH);
         byte[] content = new byte[readMessageLength(message.message) - ((int) Math.log10(byteArrayToInt(indexField) + 1))];
         System.arraycopy(getPayload(message.message), 4, content, 0, readMessageLength(message.message) - (int) Math.log10(byteArrayToInt(indexField) + 1));
 
@@ -126,7 +126,7 @@ public class MessageHandler {
 
     public static int readMessageLength(byte[] message){
         byte[] temp = new byte[Constants.MESSAGE_LENGTH];
-        System.arraycopy(message, 0, temp, 0, 4);
+        System.arraycopy(message, 0, temp, 0, Constants.MESSAGE_LENGTH);
 
         // Convert temp from byte to int
         return byteArrayToInt(temp);
@@ -164,8 +164,8 @@ public class MessageHandler {
     }
 
     public static byte[] sendHave(byte[] payload) {
-        byte[] indexField = new byte[4];
-        System.arraycopy(payload, 0, indexField, 0, 4);
+        byte[] indexField = new byte[Constants.PIECE_INDEX_FIELD_LENGTH];
+        System.arraycopy(payload, 0, indexField, 0, Constants.PIECE_INDEX_FIELD_LENGTH);
         ActualMessage have = new ActualMessage(ActualMessage.MessageType.HAVE, indexField);
         return have.message;
     }
@@ -175,8 +175,15 @@ public class MessageHandler {
         return piece.message;
     }
 
-    public static byte[] sendRequest(){
-        ActualMessage request = new ActualMessage(ActualMessage.MessageType.REQUEST);
+    public static byte[] sendRequest(Peer peer1){
+        Random rand = new Random();
+        int randomBit = -1;
+
+        do {
+            randomBit = rand.nextInt(peer1.getBitField().length);
+        } while (peer1.getBitField()[randomBit] == 1);
+
+        ActualMessage request = new ActualMessage(ActualMessage.MessageType.REQUEST, new byte[]{peer1.getBitField()[randomBit]});
         return request.message;
     }
 }

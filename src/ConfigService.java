@@ -101,7 +101,7 @@ public class ConfigService {
         HashSet<Peer> UnChoked = new HashSet<>();
         ConfigService.peerMap.forEach((peerID, peer) -> {
             if(PeerHandler.peerID != peerID){
-                if(peer.choked == false){
+                if(!peer.choked){
                     UnChoked.add(peer);
                 }
             }
@@ -112,7 +112,7 @@ public class ConfigService {
         HashSet<Peer> Choked = new HashSet<>();
         ConfigService.peerMap.forEach((peerID, peer) -> {
             if(PeerHandler.peerID != peerID){
-                if(peer.choked == true){
+                if(peer.choked){
                     Choked.add(peer);
                 }
             }
@@ -124,7 +124,7 @@ public class ConfigService {
         HashSet<Peer> Interested = new HashSet<>();
         ConfigService.peerMap.forEach((peerID, peer) -> {
             if(PeerHandler.peerID != peerID){
-                if(peer.Interested == true){
+                if(peer.Interested){
                     Interested.add(peer);
                 }
             }
