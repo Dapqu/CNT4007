@@ -5,12 +5,13 @@ public class MessageHandler {
         byte[] payload = message.getMessagePayload();
         switch(message.messageType){
             case CHOKE:
-                handleChoke(payload);
+                handleChoke(peer2ID);
                 Logger.logChoking(peer2ID, peer1.getPeerID());
                 break;
 
             case UNCHOKE:
-                handleUnchoke(payload);
+                handleUnchoke(peer2ID);
+                sendRequest();
                 Logger.logUnchoking(peer2ID, peer1.getPeerID());
                 break;
 
@@ -40,69 +41,77 @@ public class MessageHandler {
                 break;
 
             case PIECE:
-                handlePiece();
+                handlePiece(message, peer2ID);
+                return sendHave(payload);
                 break;
         }
+        return null;
     }
 
     // Will need to add functionality for Choke
-    public static void handleChoke(byte[] message){
-        // TODO: Add parameter to this method maybe?
-        // Since logger needs that info.
+    public static void handleChoke(int peer2){
+        ConfigService.peerMap.get(peer2).choked = true;
     }
 
     // Will need to add functionality Unchoke
-    public static void handleUnchoke(byte[] message){
-        // TODO: Add parameter to this method maybe?
-        // Since logger needs that info.
+    public static void handleUnchoke(int peer2){
+        ConfigService.peerMap.get(peer2).choked = false;
     }
 
     // Will need to add functionality for interested
-    public static void handleInterested(byte[] message){
+    public static void handleInterested(byte[] payload){
         // TODO: Add parameter to this method maybe?
         // Since logger needs that info.
     }
 
     // Will need to add functionality for not interested
-    public static void handleNotInterested(byte[] message){
+    public static void handleNotInterested(byte[] payload){
         // TODO: Add parameter to this method maybe?
         // Since logger needs that info.
     }
 
     // Will need to add functionality for have
-    public static void handleHave(byte[] message){
-        // TODO: Add parameter to this method maybe?
-        // Since logger needs that info.
-        getPayload(message);
-    }
-
-    // Will need to add functionality for bitfield
-    //Potentially own class
-    public static byte[] handleBitfield(byte[] message, Peer peer1){
-        // TODO: Do we need log here?
-        // Once A receives a 'bitfield' message from B, A will compare its bitfield with received bitfield, in this case the payload.
-        // If B's bitfield, payload, has pieces that A's bitfield does not have, A sends 'interested' message, else sends 'not interested'.
-
-        byte[] receivedBitField = getPayload(message);
+    public static byte[] handleHave(byte[] payload, Peer peer1){
         if (!peer1.getHasFile()) {
-            if (receivedBitField != peer1.getBitField()) {
+            if (payload != peer1.getBitField()) {
                 return sendInterested();
             } else {
                 return sendNotInterested();
             }
         }
+        return null;
+    }
+
+    // Will need to add functionality for bitfield
+    //Potentially own class
+    public static byte[] handleBitfield(byte[] payload, Peer peer1){
+        // TODO: Do we need log here?
+        // Once A receives a 'bitfield' message from B, A will compare its bitfield with received bitfield, in this case the payload.
+        // If B's bitfield, payload, has pieces that A's bitfield does not have, A sends 'interested' message, else sends 'not interested'.
+
+        if (!peer1.getHasFile()) {
+            if (payload != peer1.getBitField()) {
+                return sendInterested();
+            } else {
+                return sendNotInterested();
+            }
+        }
+        return null;
     }
 
     // Will need to add functionality for request
-    public static void handleRequest(byte[] message){
+    public static void handleRequest(byte[] payload){
         // TODO: Do we need log here?
-        getPayload(message);
     }
 
     // Will need to add functionality for piece
-    public static void handlePiece(){
-        // TODO: Do we need log here?
-        getPayload(message);
+    public static void handlePiece(ActualMessage message, int peer2){
+        byte[] indexField = new byte[4];
+        System.arraycopy(getPayload(message.message), 0, indexField, 0, 4);
+        byte[] content = new byte[readMessageLength(message.message) - ((int) Math.log10(byteArrayToInt(indexField) + 1))];
+        System.arraycopy(getPayload(message.message), 4, content, 0, readMessageLength(message.message) - (int) Math.log10(byteArrayToInt(indexField) + 1));
+
+        ConfigService.peerMap.get(peer2).updateBitField(byteArrayToInt(indexField));
         // After piece message, it will be the start of download, thus we will be logging:
         //Logger.logDownload();
         //Logger.logCompelete();
@@ -154,4 +163,10 @@ public class MessageHandler {
         return unchoke.message;
     }
 
+    public static byte[] sendHave(byte[] payload) {
+        byte[] indexField = new byte[4];
+        System.arraycopy(payload, 0, indexField, 0, 4);
+        ActualMessage have = new ActualMessage(ActualMessage.MessageType.HAVE, indexField);
+        return have.message;
+    }
 }

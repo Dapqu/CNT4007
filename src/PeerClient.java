@@ -45,7 +45,7 @@ public class PeerClient {
 			//maybe put in a larger while loop that turns it off
 			do {
 				Received = (byte[]) in.readObject();
-				ActualMessage Ms = new ActualMessage(Received);
+				Ms = new ActualMessage(Received);
 				message = MessageHandler.handleMessage(Ms, ConfigService.peerMap.get(PeerHandler.peerID), otherPeer.getPeerID());
 				sendMessage(message);
 			} while(Unchoked);
