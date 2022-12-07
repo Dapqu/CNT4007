@@ -30,6 +30,7 @@ public class PeerHandler {
         ConfigService.peerMap.forEach((peerID, peer) -> {
             if(this.peerID >= peerID) return;
             PeerClient peerClient = new PeerClient(peer);
+            peer.Client = peerClient;
             peerClient.initiateHandshake();
         });
     }

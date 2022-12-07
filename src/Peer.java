@@ -14,12 +14,16 @@ public class Peer {
 
     public boolean choked;
 
-    public boolean Interested;
+    public boolean weAreInterestedInThem;
+
+    public boolean theyAreInterestedInUs;
 
     public int downloadRate; //more here
 
     private byte[] bitField;
     //private HashMap<Integer, byte[]> bitFieldMap = new HashMap<>();
+
+    public PeerClient Client;
 
     public Peer() {
 

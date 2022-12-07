@@ -7,11 +7,13 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.RandomAccessFile;
 import java.util.HashMap;
 import java.util.Objects;
 
 import static java.lang.Integer.parseInt;
 import java.util.HashSet;
+import java.util.RandomAccess;
 
 public class ConfigService {
     public static HashMap<Integer, Peer> peerMap = new HashMap<>();
@@ -94,6 +96,27 @@ public class ConfigService {
         br.close();
     }
 
+    public static byte[] getPiece(int pieceindex){
+    try {
+        RandomAccessFile file = new RandomAccessFile("File.txt", "r");
+
+        int position = ConfigService.ConfigurationFileVariables.pieceSize * pieceindex;
+        int size = ConfigService.ConfigurationFileVariables.pieceSize;
+        if (pieceindex == ConfigService.ConfigurationFileVariables.numOfPieces - 1) {
+            size = ConfigService.ConfigurationFileVariables.fileSize % ConfigService.ConfigurationFileVariables.pieceSize;
+        }
+        file.seek(position);
+        byte[] data = new byte[size];
+        file.read(data);
+        return data;
+    }
+    catch (Exception e) {
+        e.printStackTrace();
+
+    }
+        return new byte[0];
+
+    }
     //get everyone else function
 
     //get unchoked function
@@ -120,11 +143,11 @@ public class ConfigService {
         return Choked;
     }
 
-    public static HashSet<Peer> getInterested(){
+    public static HashSet<Peer> getInterestedInUs(){
         HashSet<Peer> Interested = new HashSet<>();
         ConfigService.peerMap.forEach((peerID, peer) -> {
             if(PeerHandler.peerID != peerID){
-                if(peer.Interested){
+                if(peer.theyAreInterestedInUs){
                     Interested.add(peer);
                 }
             }

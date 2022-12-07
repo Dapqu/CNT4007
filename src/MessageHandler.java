@@ -6,6 +6,7 @@ public class MessageHandler {
 
     public static byte[] handleMessage(ActualMessage message, Peer peer1, int peer2ID){
         byte[] payload = message.getMessagePayload();
+        byte[] response = null;
         switch(message.messageType){
             case CHOKE:
                 handleChoke(peer2ID);
@@ -14,17 +15,17 @@ public class MessageHandler {
 
             case UNCHOKE:
                 handleUnchoke(peer2ID);
-                sendRequest(peer1);
                 Logger.logUnchoking(peer2ID, peer1.getPeerID());
+                response = sendRequest(peer1);
                 break;
 
             case INTERESTED:
-                handleInterested(payload);
+                handleInterested(peer2ID);
                 Logger.logInterested(peer2ID, peer1.getPeerID());
                 break;
 
             case NOT_INTERESTED:
-                handleNotInterested(payload);
+                handleNotInterested(peer2ID);
                 Logger.logNotInterested(peer2ID, peer1.getPeerID());
                 break;
 
@@ -35,18 +36,20 @@ public class MessageHandler {
 
             case BITFIELD:
                 //peer1.setBitFieldMap(peer2ID, message.messagePayload);
-                return handleBitfield(payload, peer1);
+                response = handleBitfield(payload, peer1);
+                break;
 
             case REQUEST:
-                handleRequest(payload);
                 Logger.logRequest(peer2ID, peer1.getPeerID());
+                response = handleRequest(payload);
                 break;
 
             case PIECE:
                 handlePiece(message, peer2ID);
-                return sendHave(payload);
+                response = sendHave(payload);
+                break;
         }
-        return null;
+        return response;
     }
 
     // Will need to add functionality for Choke
@@ -60,14 +63,14 @@ public class MessageHandler {
     }
 
     // Will need to add functionality for interested
-    public static void handleInterested(byte[] payload){
-        // TODO: Add parameter to this method maybe?
+    public static void handleInterested(int peer2){
+        ConfigService.peerMap.get(peer2).theyAreInterestedInUs = true;
         // Since logger needs that info.
     }
 
     // Will need to add functionality for not interested
-    public static void handleNotInterested(byte[] payload){
-        // TODO: Add parameter to this method maybe?
+    public static void handleNotInterested( int peer2){
+        ConfigService.peerMap.get(peer2).theyAreInterestedInUs = false;
         // Since logger needs that info.
     }
 
@@ -100,8 +103,8 @@ public class MessageHandler {
     }
 
     // Will need to add functionality for request
-    public static void handleRequest(byte[] payload){
-        // TODO: Do we need log here?
+    public static byte[] handleRequest(byte[] payload){
+        return sendPiece(byteArrayToInt(payload));
     }
 
     // Will need to add functionality for piece
@@ -170,8 +173,8 @@ public class MessageHandler {
         return have.message;
     }
 
-    public static byte[] sendPiece(){
-        ActualMessage piece = new ActualMessage(ActualMessage.MessageType.PIECE);
+    public static byte[] sendPiece(int index){
+        ActualMessage piece = new ActualMessage(ActualMessage.MessageType.PIECE, ConfigService.getPiece(index));
         return piece.message;
     }
 

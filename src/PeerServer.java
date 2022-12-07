@@ -36,6 +36,7 @@ public class PeerServer {
         private ObjectInputStream in; //stream read from the socket
         private ObjectOutputStream out;    //stream write to the socket
         private int otherPeerID;
+        public boolean on;
 
         public Handler(Socket connection) {
             this.connection = connection;
@@ -51,16 +52,17 @@ public class PeerServer {
                 //handle handshake and store ID then go into loop
                 received = (byte[]) in.readObject();
                 otherPeerID = HandshakeHelper.parseHandshakeMessage(received);
-
-                try {
-                    while (true) {
-                        received = (byte[]) in.readObject();
-                        ActualMessage Ms = new ActualMessage(received);
-                        response = MessageHandler.handleMessage(Ms, peer, otherPeerID);
-                        sendMessage(response);
+                while(on) {
+                    try {
+                        while (!ConfigService.peerMap.get(otherPeerID).choked) {
+                            received = (byte[]) in.readObject();
+                            ActualMessage Ms = new ActualMessage(received);
+                            response = MessageHandler.handleMessage(Ms, peer, otherPeerID);
+                            sendMessage(response);
+                        }
+                    } catch (ClassNotFoundException classnot) {
+                        System.err.println("Data received in unknown format");
                     }
-                } catch (ClassNotFoundException classnot) {
-                    System.err.println("Data received in unknown format");
                 }
             } catch (IOException ioException) {
                 System.out.println("Disconnect with Client ");

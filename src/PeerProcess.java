@@ -5,5 +5,9 @@ public class PeerProcess {
         peerHandler.loadPeerInfo();
         peerHandler.startServer();
         peerHandler.reachOut();
+        ChokeHandler cH = new ChokeHandler();
+        cH.startJob();
+        OptimisticUnchokeHandler oUcH = new OptimisticUnchokeHandler();
+        oUcH.startJob();
     }
 }
