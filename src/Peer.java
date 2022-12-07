@@ -16,7 +16,7 @@ public class Peer {
 
     public boolean Interested;
 
-    public int rate; //more here
+    public int downloadRate; //more here
 
     private byte[] bitField;
     //private HashMap<Integer, byte[]> bitFieldMap = new HashMap<>();

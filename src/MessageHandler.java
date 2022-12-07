@@ -26,7 +26,7 @@ public class MessageHandler {
                 break;
 
             case HAVE:
-                handleHave(payload);
+                handleHave(payload, peer1);
                 Logger.logHave(peer2ID, peer1.getPeerID(), PieceIndex);
                 break;
 
@@ -168,5 +168,15 @@ public class MessageHandler {
         System.arraycopy(payload, 0, indexField, 0, 4);
         ActualMessage have = new ActualMessage(ActualMessage.MessageType.HAVE, indexField);
         return have.message;
+    }
+
+    public static byte[] sendPiece(){
+        ActualMessage piece = new ActualMessage(ActualMessage.MessageType.PIECE);
+        return piece.message;
+    }
+
+    public static byte[] sendRequest(){
+        ActualMessage request = new ActualMessage(ActualMessage.MessageType.REQUEST);
+        return request.message;
     }
 }

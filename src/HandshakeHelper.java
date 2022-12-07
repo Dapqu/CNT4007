@@ -26,7 +26,7 @@ public class HandshakeHelper {
     }
 
     // Decodes Handshake message from byte array into string or integer accordingly.
-    private static int parseHandshakeMessage(byte[] messageReceived) {
+    public static int parseHandshakeMessage(byte[] messageReceived) {
         // Parse the peer id.
         bytePeerID = Arrays.copyOfRange(messageReceived,
                 Constants.HANDSHAKE_HEADER_LENGTH + Constants.HANDSHAKE_ZERO_BITS_LENGTH, Constants.HANDSHAKE_MESSAGE_LENGTH);

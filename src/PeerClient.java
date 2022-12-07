@@ -10,6 +10,8 @@ public class PeerClient {
 	private Peer otherPeer;
 	private boolean Unchoked;
 
+	public boolean on;
+
 	public PeerClient(Peer otherPeer) {
 		this.otherPeer = otherPeer;
 	}
@@ -42,13 +44,14 @@ public class PeerClient {
 			//}
 			// Assuming that every peer in the connection want to end up having everything there is with each other, aka hasFile = 1 and BitField all the same,
 			// job is done, disconnect.
-			//maybe put in a larger while loop that turns it off
-			do {
-				Received = (byte[]) in.readObject();
-				Ms = new ActualMessage(Received);
-				message = MessageHandler.handleMessage(Ms, ConfigService.peerMap.get(PeerHandler.peerID), otherPeer.getPeerID());
-				sendMessage(message);
-			} while(Unchoked);
+			while(on) {
+				do {
+					Received = (byte[]) in.readObject();
+					Ms = new ActualMessage(Received);
+					message = MessageHandler.handleMessage(Ms, ConfigService.peerMap.get(PeerHandler.peerID), otherPeer.getPeerID());
+					sendMessage(message);
+				} while (!ConfigService.peerMap.get(otherPeer).choked);
+			}
 			//Guess a choke will turn off connected, but maybe put it in a bigger loop
 			//If we get the response we want(handshake), start a loop of sending and reciving the data. Starting with bit field
 			//create the message and send it
@@ -80,7 +83,7 @@ public class PeerClient {
 		}
 	}
 	//send a message to the output stream
-	void sendMessage(byte[] msg)
+	public void sendMessage(byte[] msg)
 	{
 		try{
 			//stream write the message

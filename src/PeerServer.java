@@ -35,7 +35,7 @@ public class PeerServer {
         private Socket connection;
         private ObjectInputStream in; //stream read from the socket
         private ObjectOutputStream out;    //stream write to the socket
-        private int otherPeerID; //The index number of the client
+        private int otherPeerID;
 
         public Handler(Socket connection) {
             this.connection = connection;
@@ -49,19 +49,23 @@ public class PeerServer {
                 out.flush();
                 in = new ObjectInputStream(connection.getInputStream());
                 //handle handshake and store ID then go into loop
+                received = (byte[]) in.readObject();
+                otherPeerID = HandshakeHelper.parseHandshakeMessage(received);
 
                 try {
                     while (true) {
                         received = (byte[]) in.readObject();
                         ActualMessage Ms = new ActualMessage(received);
-                        response = MessageHandler.handleMessage(Ms, peer, otherpeer);
-                        sendMessage(MESSAGE);
+                        response = MessageHandler.handleMessage(Ms, peer, otherPeerID);
+                        sendMessage(response);
                     }
                 } catch (ClassNotFoundException classnot) {
                     System.err.println("Data received in unknown format");
                 }
             } catch (IOException ioException) {
                 System.out.println("Disconnect with Client ");
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             } finally {
                 //Close connections
                 try {
@@ -75,11 +79,10 @@ public class PeerServer {
         }
 
         //send a message to the output stream
-        public void sendMessage(String msg) {
+        public void sendMessage(byte[] msg) {
             try {
                 out.writeObject(msg);
                 out.flush();
-                System.out.println("Send message: " + msg + " to Client ");
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }

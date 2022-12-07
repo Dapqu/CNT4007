@@ -131,6 +131,16 @@ public class ConfigService {
         });
         return Interested;
     }
+
+    public static HashSet<Peer> getNeighbors(){
+        HashSet<Peer> Neighbors = new HashSet<>();
+        ConfigService.peerMap.forEach((peerID, peer) -> {
+            if(PeerHandler.peerID != peerID){
+                Neighbors.add(peer);
+            }
+        });
+        return Neighbors;
+    }
     //get choked function
 
     //maybe return them as a map
