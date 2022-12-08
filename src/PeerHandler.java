@@ -12,26 +12,31 @@ public class PeerHandler {
 
     public void loadPeerInfo() {
         try {
-            ConfigService.readPeersInfo();
             ConfigService.readCommonProperties();
+            ConfigService.readPeersInfo();
         }
         catch (Exception e){
-
+            System.out.println("GAY");
         }
     }
 
     public void startServer() {
         var peer = ConfigService.peerMap.get(peerID);
-        server = new PeerServer();
+        server = new PeerServer(peer.getPort());
+        try {
+            server.start();
+        }
+        catch(Exception e){}
         Logger.startLogger("log_peer_" + peerID + ".log");
     }
 
     public void reachOut() {
         ConfigService.peerMap.forEach((peerID, peer) -> {
-            if(this.peerID >= peerID) return;
+            if(this.peerID <= peerID) return;
             PeerClient peerClient = new PeerClient(peer);
             peer.Client = peerClient;
-            peerClient.initiateHandshake();
+            Logger.logTCPConnection(PeerHandler.peerID, peerID);
+            peerClient.run();
         });
     }
 }

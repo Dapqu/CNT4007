@@ -1,7 +1,7 @@
 import java.net.*;
 import java.io.*;
 
-public class PeerClient {
+public class PeerClient extends Thread{
 	Socket requestSocket;           //socket connect to the server
 	ObjectOutputStream out;         //stream write to the socket
  	ObjectInputStream in;          //stream read from the socket
@@ -10,13 +10,13 @@ public class PeerClient {
 	private Peer otherPeer;
 	private boolean Unchoked;
 
-	public boolean on;
+	public boolean on = true;
 
 	public PeerClient(Peer otherPeer) {
 		this.otherPeer = otherPeer;
 	}
 
-	void initiateHandshake()
+	public void run()
 	{
 		try{
 			requestSocket = new Socket(otherPeer.getHostAddress(), otherPeer.getPort());
@@ -24,21 +24,21 @@ public class PeerClient {
 			out.flush();
 			in = new ObjectInputStream(requestSocket.getInputStream());
 			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-
+			//Logger.logTCPConnection(PeerHandler.peerID, otherPeer.getPeerID());
 			//send handShake
 			message = HandshakeHelper.sendHandshakeMessage();
 			sendMessage(message);
 
 			//Verify handshake response
-			Received = (byte[]) in.readObject();
+			Received = readBuffer();
 			if (!HandshakeHelper.VerifyHandShakeMessage(Received, otherPeer.getPeerID())) return;
 
 			//send our bitfield
 			ActualMessage MessageToSend = new ActualMessage(ActualMessage.MessageType.BITFIELD, otherPeer.getBitField());
 			sendMessage(MessageToSend.message);
 
-			Received = (byte[]) in.readObject();
-			ActualMessage Ms = new ActualMessage(Received);
+			//Received = readBuffer();
+			//ActualMessage Ms = new ActualMessage(Received);
 //			ConfigService.peerMap.get(returnedPeerID).setBitField(new byte[0]);
 			//if(ConfigService.peerMap.get(PeerHandler.peerID).getHasFile()){
 			//}
@@ -46,11 +46,12 @@ public class PeerClient {
 			// job is done, disconnect.
 			while(on) {
 				do {
-					Received = (byte[]) in.readObject();
-					Ms = new ActualMessage(Received);
+					Received = readBuffer();
+					ActualMessage Ms = new ActualMessage(Received);
 					message = MessageHandler.handleMessage(Ms, ConfigService.peerMap.get(PeerHandler.peerID), otherPeer.getPeerID());
-					sendMessage(message);
-				} while (!ConfigService.peerMap.get(otherPeer).choked);
+					if(message != null)
+						sendMessage(message);
+				} while (on);
 			}
 			//Guess a choke will turn off connected, but maybe put it in a bigger loop
 			//If we get the response we want(handshake), start a loop of sending and reciving the data. Starting with bit field
@@ -60,10 +61,7 @@ public class PeerClient {
 		}
 		catch (ConnectException e) {
     			System.err.println("Connection refused. You need to initiate a server first.");
-		} 
-		catch ( ClassNotFoundException e ) {
-            		System.err.println("Class not found");
-        	} 
+		}
 		catch(UnknownHostException unknownHost){
 			System.err.println("You are trying to connect to an unknown host!");
 		}
@@ -93,6 +91,17 @@ public class PeerClient {
 		catch(IOException ioException){
 			ioException.printStackTrace();
 		}
+	}
+
+	public byte[] readBuffer(){
+		byte[] response = null;
+		while(response == null){
+			try {
+				response = (byte[]) in.readObject();
+			}
+			catch(Exception e){}
+		}
+		return response;
 	}
 
 }

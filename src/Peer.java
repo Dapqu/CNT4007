@@ -34,7 +34,9 @@ public class Peer {
         this.hostAddress = hostAddress;
         this.port = port;
         this.hasFile = hasFile;
-
+        choked = true;
+        theyAreInterestedInUs = false;
+        weAreInterestedInThem = false;
         makeBitField();
     }
 

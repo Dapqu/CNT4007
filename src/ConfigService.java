@@ -1,9 +1,3 @@
-/**
- * The main class that the project would be executed from, ex. PeerProcess 1001.
- * contains functions like reading the Common.cfg and PeerInfo.cfg file which stores the properties within.
- * And the main function to execute the whole BitTorrent like system.
- */
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;

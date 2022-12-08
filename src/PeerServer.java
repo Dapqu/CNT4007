@@ -4,23 +4,30 @@ import java.nio.*;
 import java.nio.channels.*;
 import java.util.*;
 
-public class PeerServer {
+public class PeerServer extends Thread{
 
-    private Peer peer;
     private ServerSocket listener;
+    int port;
 
-    PeerServer() {
+    PeerServer(int port) {
+        this.port = port;
     }
 
-    public void startSever(int port) throws Exception {
+    public void run() {
         System.out.println("The server is running.");
-        listener = new ServerSocket(port);
         try {
+            listener = new ServerSocket(port);
             while (true) {
                 new Handler(listener.accept()).start();
             }
-        } finally {
-            listener.close();
+        } catch(Exception e){
+
+        }
+        finally {
+            try {
+                listener.close();
+            }
+            catch(Exception e){}
         }
 
     }
@@ -36,7 +43,7 @@ public class PeerServer {
         private ObjectInputStream in; //stream read from the socket
         private ObjectOutputStream out;    //stream write to the socket
         private int otherPeerID;
-        public boolean on;
+        public boolean on = true;
 
         public Handler(Socket connection) {
             this.connection = connection;
@@ -50,24 +57,23 @@ public class PeerServer {
                 out.flush();
                 in = new ObjectInputStream(connection.getInputStream());
                 //handle handshake and store ID then go into loop
-                received = (byte[]) in.readObject();
+                received = readBuffer();
                 otherPeerID = HandshakeHelper.parseHandshakeMessage(received);
+                response = HandshakeHelper.sendHandshakeMessage();
+                sendMessage(response);
+                Logger.logConnected(PeerHandler.peerID, otherPeerID);
                 while(on) {
-                    try {
-                        while (!ConfigService.peerMap.get(otherPeerID).choked) {
-                            received = (byte[]) in.readObject();
-                            ActualMessage Ms = new ActualMessage(received);
-                            response = MessageHandler.handleMessage(Ms, peer, otherPeerID);
+                    while (on) {
+                        received = readBuffer();
+                        ActualMessage Ms = new ActualMessage(received);
+                        response = MessageHandler.handleMessage(Ms, ConfigService.peerMap.get(PeerHandler.peerID), otherPeerID);
+                        if(response != null)
                             sendMessage(response);
-                        }
-                    } catch (ClassNotFoundException classnot) {
-                        System.err.println("Data received in unknown format");
                     }
                 }
+
             } catch (IOException ioException) {
                 System.out.println("Disconnect with Client ");
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
             } finally {
                 //Close connections
                 try {
@@ -88,6 +94,17 @@ public class PeerServer {
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
+        }
+
+        public byte[] readBuffer(){
+            byte[] response = null;
+            while(response == null){
+                try {
+                    response = (byte[]) in.readObject();
+                }
+                catch(Exception e){}
+            }
+            return response;
         }
     }
 }

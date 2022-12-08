@@ -1,4 +1,5 @@
 import java.util.HashSet;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -7,10 +8,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ChokeHandler implements Runnable{
 
     private ScheduledFuture<?> job = null;
-    private ScheduledExecutorService scheduler = null;
+    private ScheduledExecutorService scheduler;
 
     public void startJob() {
-        this.job = this.scheduler.scheduleAtFixedRate(this, ConfigService.ConfigurationFileVariables.unchokingInterval, ConfigService.ConfigurationFileVariables.unchokingInterval, TimeUnit.SECONDS);
+        this.scheduler = Executors.newScheduledThreadPool(1);
+        this.job = this.scheduler.scheduleAtFixedRate(this, 6, ConfigService.ConfigurationFileVariables.unchokingInterval, TimeUnit.SECONDS);
     }
 
     public void run(){
@@ -37,10 +39,20 @@ public class ChokeHandler implements Runnable{
                 }
                 ActualMessage Ms = new ActualMessage(ActualMessage.MessageType.UNCHOKE);
                 chosenPeer[0].Client.sendMessage(Ms.message);
+                chosenPeer[0].choked = false;
                 neighbors.remove(chosenPeer[0]);
             });
-
         }
+        neighbors.forEach(peer -> {
+            ActualMessage Ms = new ActualMessage(ActualMessage.MessageType.CHOKE);
+            chosenPeer[0].Client.sendMessage(Ms.message);
+            chosenPeer[0].choked = true;
+        });
+        final String[] temp = {""};
+        ConfigService.getUnchoked().forEach(peer ->{
+            temp[0] = temp[0] + Integer.toString(peer.getPeerID());
+        });
+        Logger.logChangePreferredNeighbors(PeerHandler.peerID,temp[0]);
 
     }
 }

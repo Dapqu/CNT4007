@@ -55,7 +55,8 @@ public class ActualMessage {
         // Adding type byte
         this.message[4] = (byte)(messageType.ordinal());
         // Adding payload byte array
-        System.arraycopy(messagePayload, 0, this.message, 5, messageLength);
+        if(messagePayload != null)
+            System.arraycopy(messagePayload, 0, this.message, 5, messageLength);
     }
 
 

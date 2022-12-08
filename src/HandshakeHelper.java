@@ -4,6 +4,7 @@
 
 
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
@@ -12,7 +13,7 @@ import static java.lang.Integer.parseInt;
 public class HandshakeHelper {
     private static byte[] byteHeader = new byte[Constants.HANDSHAKE_HEADER_LENGTH];
     private static final byte[] byteZeroBits = Constants.HANDSHAKE_ZERO_BITS.getBytes();
-    private static byte[] bytePeerID = new byte[Constants.HANDSHAKE_PEER_ID_LENGTH];
+    //private static byte[] bytePeerID = new byte[Constants.HANDSHAKE_PEER_ID_LENGTH];
 
     private String header;
     private String peerID;
@@ -28,12 +29,10 @@ public class HandshakeHelper {
     // Decodes Handshake message from byte array into string or integer accordingly.
     public static int parseHandshakeMessage(byte[] messageReceived) {
         // Parse the peer id.
-        bytePeerID = Arrays.copyOfRange(messageReceived,
+        byte[] bytePeerID = Arrays.copyOfRange(messageReceived,
                 Constants.HANDSHAKE_HEADER_LENGTH + Constants.HANDSHAKE_ZERO_BITS_LENGTH, Constants.HANDSHAKE_MESSAGE_LENGTH);
 
-        String peerID = new String(bytePeerID);
-
-        return Integer.parseInt(peerID);
+        return ActualMessage.byteArrayToInt(bytePeerID);
     }
 
     public static boolean VerifyHandShakeMessage(byte[] messageReceived, int expectedPeerID) {
@@ -48,14 +47,17 @@ public class HandshakeHelper {
         byte[] sendMessage = new byte[Constants.HANDSHAKE_MESSAGE_LENGTH];
 
         // Put header into the sending message.
-        System.arraycopy(byteHeader, 0, sendMessage, 0, Constants.HANDSHAKE_HEADER_LENGTH);
+        Charset charset = Charset.forName("ASCII");
+        String x = "P2PFILESHARINGPROJ";
+        byte[] header = x.getBytes(charset);
+        System.arraycopy(header, 0, sendMessage, 0, Constants.HANDSHAKE_HEADER_LENGTH);
 
         // Put zero bits into the sending message.
         System.arraycopy(byteZeroBits, 0, sendMessage,
                 Constants.HANDSHAKE_HEADER_LENGTH, Constants.HANDSHAKE_ZERO_BITS_LENGTH);
 
         // Put peer id into the sending message.
-        System.arraycopy(bytePeerID, 0, sendMessage,
+        System.arraycopy(ActualMessage.intToByteArray(PeerHandler.peerID), 0, sendMessage,
                 Constants.HANDSHAKE_HEADER_LENGTH + Constants.HANDSHAKE_ZERO_BITS_LENGTH, Constants.HANDSHAKE_PEER_ID_LENGTH);
 
         return sendMessage;
